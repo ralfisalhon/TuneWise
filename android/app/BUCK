@@ -35,12 +35,12 @@ android_library(
 
 android_build_config(
     name = "build_config",
-    package = "com.jamblrv2",
+    package = "com.tunewise",
 )
 
 android_resource(
     name = "res",
-    package = "com.jamblrv2",
+    package = "com.tunewise",
     res = "src/main/res",
 )
 

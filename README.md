@@ -1,2 +1,2 @@
-# JamblrV2
-^.^
+# TuneWise
+by Ralfi, San, Mohsin, Nihal

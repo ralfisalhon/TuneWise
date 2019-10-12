@@ -23,7 +23,7 @@ import { Song } from "../assets/components/Song";
 import { SearchResult } from "../assets/components/SearchResult";
 
 const token =
-  "BQB-SuJOVMYUJ60WTKZANa6WyQJ3zLQSdCepjHkIhMN41MQ7KifJDODhO0YujwU4wTgd5niQfyJ9fCpa3-GRrizqF8mlcV_ADosqPoRyKg3Q83jc00P9VB1Fgar-6ndI19Z4S8wpfr_NZyg9luQ4lpAY0jJyFcHnlzTeCpfKgOPF3KmsJQZFVvmIv5P0fbF7e9KXvwdO8tHHTPv17JHwIGMjYMe153Tw1rDZi3uWaEVvRR-zbHoMOoQiUVG-yspICFkxj6kNErVcjNnGA7mPVieujwgkVTrpuNP1XkU";
+  "BQA7EWyLdgGs9nBWmI7kbCtlPqRIGUP_fa9532BqamkXoiScGDoLZHHooTz-Vyoy6yRvyUpTYhp2_A6QGGW_aYi_9dmv-08fOY2LDyCyCRHG5h3lWl1MFGeQhl3GOiE69jfLhBxqdp_tNl8rBEze9BvTUA6z2RQgBpAv8oyn2dAd7aXnJ7IxL06Nm-ICiLFcJDVN6UXPivD6glQ4tSkz6umsvQhzk-4gEvY94dARObjEy7xyAZhw_0cpVeZlRlpkmB_ymz-YOeYM2axfvHbNajt5QnSXw3Sd850uipE";
 
 const HEADER_HEIGHT = 100;
 

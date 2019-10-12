@@ -3,7 +3,6 @@ import { View, StyleSheet, Text, Dimensions } from "react-native";
 import { human } from "react-native-typography";
 
 const { width: windowWidth } = Dimensions.get("window");
-const isSmallDevice = windowWidth < 350 ? true : false;
 
 class Welcome extends Component {
   static defaultProps = {};

@@ -16,6 +16,9 @@ const { width: windowWidth, height: windowHeight } = Dimensions.get("window");
 import { human, material } from "react-native-typography";
 import { SafeAreaView } from "react-navigation";
 
+import { LinedText } from "../assets/components/LinedText";
+import { Header } from "../assets/components/Header";
+
 import Spotify from "rn-spotify-sdk";
 
 const spotifyOptions = {
@@ -106,28 +109,7 @@ export class MainScreen extends React.Component {
 
     return (
       <SafeAreaView style={styles.container}>
-        <View style={styles.header}>
-          <TouchableOpacity
-            style={{ width: 24, height: 24 }}
-            onPress={() => this.threeLinesPressed()}
-          >
-            <Image
-              style={{ height: undefined, width: undefined, flex: 1 }}
-              resizeMode={"contain"}
-              source={require("../assets/images/3lines.png")}
-            />
-          </TouchableOpacity>
-          <View>
-            <Text style={styles.text}>--- get ur bop on ---</Text>
-          </View>
-          <TouchableOpacity style={{ width: 24, height: 24 }} onPress={() => this.gearPressed()}>
-            <Image
-              style={{ height: undefined, width: undefined, flex: 1 }}
-              resizeMode={"contain"}
-              source={require("../assets/images/gear.png")}
-            />
-          </TouchableOpacity>
-        </View>
+        <Header title={"get ur bop on"}></Header>
         <View style={{ flex: 1, justifyContent: "center" }}>
           <View style={styles.logo}>
             <Image
@@ -145,7 +127,7 @@ export class MainScreen extends React.Component {
               <Text style={[styles.text, styles.gameAsHostText]}>create session.</Text>
             </TouchableOpacity>
             <View style={{ marginVertical: 20 }}>
-              <Text style={styles.text}>----- or -----</Text>
+              <LinedText text={"or"}></LinedText>
             </View>
             <TouchableOpacity
               style={[styles.button, styles.joinExisting]}
@@ -171,12 +153,6 @@ const styles = StyleSheet.create({
     width: windowWidth - 40,
     borderRadius: 20
   },
-  title: {
-    color: "white",
-    fontFamily: "Courier New",
-    fontSize: 24,
-    fontWeight: "600"
-  },
   text: {
     color: "white",
     fontFamily: "Courier",
@@ -190,16 +166,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     opacity: 0.5
   },
-  header: {
-    width: windowWidth,
-    height: 50,
-    justifyContent: "space-between",
-    flexDirection: "row",
-    alignItems: "center",
-    margin: 5,
-    paddingHorizontal: 30,
-    marginTop: 20
-  },
+
   button: {
     backgroundColor: "gray",
     paddingHorizontal: 25,

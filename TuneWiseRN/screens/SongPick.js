@@ -15,6 +15,10 @@ import {
 const { width: windowWidth, height: windowHeight } = Dimensions.get("window");
 import { human } from "react-native-typography";
 
+import { LinedText } from "../assets/components/LinedText";
+import { Header } from "../assets/components/Header";
+import { SafeAreaView } from "react-navigation";
+
 export class SongPickScreen extends React.Component {
   static navigationOptions = {
     header: null
@@ -37,9 +41,9 @@ export class SongPickScreen extends React.Component {
     const { accessToken } = this.state;
 
     return (
-      <View style={styles.container}>
-        <Text style={human.subheadWhite}>HostScreen</Text>
-      </View>
+      <SafeAreaView style={styles.container}>
+        <Header title={"name ur session"}></Header>
+      </SafeAreaView>
     );
   }
 }
@@ -47,8 +51,7 @@ export class SongPickScreen extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#2c2c2c",
-    justifyContent: "center",
+    backgroundColor: "#010d58",
     alignItems: "center"
   },
   temp: {

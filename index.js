@@ -205,6 +205,12 @@ express()
         var id = crypto.randomBytes(16).toString('hex');
         db.collection('rooms', (error, collection) => {
             collection.findOne({code: room_code}, (error, result) => {
+                if (!result) {
+                    res.status(400);
+                    res.send("Error: invalid room code.");
+                    return;
+                }
+
                 var new_users = result.users;
                 new_users.push({user_name: name, user_id: id});
                 collection.updateOne({code: room_code},

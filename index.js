@@ -162,6 +162,14 @@ express()
 
     // Book a room, returning the room code.
     .post('/bookroom', (req, res) => {
+        var access_token = req.body.token;
+
+        if (access_token == null) {
+            res.status(400);
+            res.send("Error: no access token provided.");
+            return;
+        }
+
         var room_code = (Math.floor(Math.random() * (MAX_CODE - MIN_CODE + 1)) + MIN_CODE).toString();
 
         db.collection('rooms', (error, collection) => {
@@ -179,6 +187,7 @@ express()
                 }
 
                 room = {code: room_code, 
+                        token: access_token,
                         time_created: Date.now(), 
                         queue: [],
                         users: [],
@@ -209,12 +218,13 @@ express()
                 new_users.push({user_name: name, user_id: id});
                 collection.updateOne({code: room_code},
                                      {code: room_code,
+                                      token: result.token,
                                       time_created: result.time_created,
                                       queue: result.queue,
                                       users: new_users,
-                                      round: result.round}, (error, result) => {
+                                      round: result.round}, (error, up_result) => {
                     res.status(200);
-                    res.send(id);
+                    res.send({id: id, token: result.token});
                 });
             });
         });
@@ -260,6 +270,7 @@ express()
                     new_round.guesses = [];
                     collection.updateOne({code: room_code}, 
                                          {code: room_code, 
+                                          token: result.token,
                                           time_created: result.time_created, 
                                           queue: new_queue,
                                           users: result.users,
@@ -340,6 +351,7 @@ express()
 
                         collection.updateOne({code: room_code},
                                              {code: room_code,
+                                              token: result.token,
                                               time_created: result.time_created,
                                               queue: result.queue,
                                               users: result.users,
@@ -359,6 +371,7 @@ express()
 
                         collection.updateOne({code: room_code},
                                              {code: room_code,
+                                              token: result.token,
                                               time_created: result.time_created,
                                               queue: result.queue,
                                               users: result.users,
@@ -409,6 +422,7 @@ express()
                     new_queue.push({song_uri: uri, song_id: id, user_id: u_id});
                     collection.updateOne({code: room_code}, 
                                          {code: room_code, 
+                                          token: result.token,
                                           time_created: result.time_created, 
                                           queue: new_queue,
                                           users: result.users,
@@ -442,6 +456,7 @@ express()
 
                 collection.updateOne({code: room_code}, 
                                      {code: room_code, 
+                                      token: result.token,
                                       time_created: result.time_created, 
                                       queue: [],
                                       users: result.users,

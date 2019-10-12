@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { View, StyleSheet, Text, Dimensions, TouchableOpacity, Image } from "react-native";
 import { human } from "react-native-typography";
+import { SafeAreaView } from "react-navigation";
 
 const { width: windowWidth } = Dimensions.get("window");
 
@@ -11,37 +12,44 @@ class Header extends Component {
     back: false
   };
 
-  threeLinesPressed() {
-    alert("pressed 3 lines");
+  backButton(navigation) {
+    navigation.goBack();
   }
 
-  gearPressed() {
-    alert("pressed gear");
+  gearPressed(navigate) {
+    navigate("Settings");
   }
 
   render() {
-    const { title, back } = this.props;
+    const { title, back, navigate, navigation, hideSettings } = this.props;
 
     return (
       <View style={styles.header}>
         <TouchableOpacity
           style={{ width: 24, height: 24 }}
-          onPress={() => this.threeLinesPressed()}
+          onPress={() => this.backButton(navigation)}
         >
           <Image
             style={{ height: undefined, width: undefined, flex: 1 }}
             resizeMode={"contain"}
-            source={back ? require("../images/backArrow.png") : require("../images/gear.png")}
+            source={back ? require("../images/backArrow.png") : require("../images/3lines.png")}
           />
         </TouchableOpacity>
         <LinedText text={title}></LinedText>
-        <TouchableOpacity style={{ width: 24, height: 24 }} onPress={() => this.gearPressed()}>
-          <Image
-            style={{ height: undefined, width: undefined, flex: 1 }}
-            resizeMode={"contain"}
-            source={require("../images/gear.png")}
-          />
-        </TouchableOpacity>
+        {hideSettings ? (
+          <View style={{ width: 24 }} />
+        ) : (
+          <TouchableOpacity
+            style={{ width: 24, height: 24 }}
+            onPress={() => this.gearPressed(navigate)}
+          >
+            <Image
+              style={{ height: undefined, width: undefined, flex: 1 }}
+              resizeMode={"contain"}
+              source={require("../images/gear.png")}
+            />
+          </TouchableOpacity>
+        )}
       </View>
     );
   }

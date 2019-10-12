@@ -25,6 +25,8 @@ import { Header } from "../assets/components/Header";
 import { SafeAreaView } from "react-navigation";
 // import { TextInput } from "react-native-gesture-handler";
 
+const baseURI = "http://tunewise.herokuapp.com";
+
 export class NameSessionScreen extends React.Component {
   static navigationOptions = {
     header: null
@@ -54,10 +56,33 @@ export class NameSessionScreen extends React.Component {
     this.setState({ multiPhone });
   }
 
+  bookRoom = async (accessToken, navigate) => {
+    var xhr = new XMLHttpRequest();
+
+    xhr.onreadystatechange = e => {
+      console.warn(xhr.readyState);
+      if (xhr.readyState !== 4) {
+        return;
+      }
+      if (xhr.status == 200) {
+        var data = xhr.responseText;
+        var obj = JSON.parse(data.replace(/\r?\n|\r/g, ""));
+        // console.warn(obj);
+        navigate("Play", { accessToken: accessToken, sessionName: this.state.sessionName });
+      } else {
+        // console.warn(xhr.responseText, xhr.status);
+      }
+    };
+
+    xhr.open("POST", baseURI + "/bookroom");
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xhr.send("token=" + accessToken);
+  };
+
   checkInput(navigate, accessToken) {
     const { sessionName } = this.state;
     if (sessionName) {
-      navigate("Play", { accessToken, sessionName });
+      this.bookRoom(accessToken, navigate);
     } else {
       Alert.alert("pls name ur session");
     }
@@ -111,19 +136,6 @@ export class NameSessionScreen extends React.Component {
           </TouchableWithoutFeedback>
         </KeyboardAvoidingView>
         <View style={{ height: windowHeight * 0.28 }}>
-          <View style={{ justifyContent: "center", alignItems: "center" }}>
-            <Switch
-              ios_backgroundColor={"#ce47a5"}
-              trackColor={"black"}
-              thumbColor={"white"}
-              style={styles.switch}
-              onValueChange={value => this.toggleMultiPhone(value)}
-              value={this.state.multiPhone}
-            />
-            <Text style={[styles.text, { color: "white", fontSize: 18, marginTop: 8 }]}>
-              multi-phone session
-            </Text>
-          </View>
           <TouchableOpacity
             style={[styles.button, styles.startGame]}
             onPress={() => this.checkInput(navigate, accessToken)}

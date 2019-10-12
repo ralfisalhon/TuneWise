@@ -72,7 +72,7 @@ export class EnterCodeScreen extends React.Component {
     var xhr = new XMLHttpRequest();
 
     xhr.onreadystatechange = e => {
-      console.warn(xhr.readyState);
+      // console.warn(xhr.readyState);
       if (xhr.readyState !== 4) {
         return;
       }
@@ -84,9 +84,11 @@ export class EnterCodeScreen extends React.Component {
         }
         let id = obj.id;
         let token = obj.token;
+
+        console.warn(id, token);
       } else {
         // Alert.alert("Response code", xhr.status.toString());
-        console.warn(xhr.responseText, xhr.status);
+        // console.warn(xhr.responseText, xhr.status);
       }
     };
 

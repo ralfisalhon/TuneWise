@@ -4,6 +4,7 @@ var { NameSessionScreen } = require("./screens/NameSession.js");
 var { SettingsScreen } = require("./screens/Settings.js");
 var { PlayScreen } = require("./screens/Play.js");
 var { EnterCodeScreen } = require("./screens/EnterCode.js");
+var { InfoScreen } = require("./screens/Info.js");
 
 global.globalAdding = false;
 
@@ -12,7 +13,8 @@ const MainNavigator = createStackNavigator({
   NameSession: { screen: NameSessionScreen },
   Settings: { screen: SettingsScreen },
   Play: { screen: PlayScreen },
-  EnterCode: { screen: EnterCodeScreen }
+  EnterCode: { screen: EnterCodeScreen },
+  Info: { screen: InfoScreen }
 });
 
 const App = createAppContainer(MainNavigator);

@@ -70,7 +70,7 @@ export class PlayScreen extends React.Component {
         const sound = new Sound(song_uri, null, error => {
           if (error) {
             // do something
-            // console.warn(song_uri);
+            console.warn("Song does not have a preview url");
           }
           // play when loaded
           sound.play();
@@ -147,6 +147,7 @@ export class PlayScreen extends React.Component {
     // console.warn(this.state.host, this.state.firstSong);
     if (this.state.host && this.state.firstSong) {
       this.startRound(this.state.roomCode, item.preview_url, item.id, this.state.id);
+      this.setState({ firstSong: false });
     }
     console.log(songs);
     this.setState({ songs }, () =>
@@ -338,7 +339,7 @@ export class PlayScreen extends React.Component {
     return (
       <SafeAreaView style={styles.container}>
         <Header
-          title={host ? sessionName : "player"}
+          title={roomCode}
           navigate={navigate}
           navigation={this.props.navigation}
           playScreen={true}
@@ -346,7 +347,9 @@ export class PlayScreen extends React.Component {
         ></Header>
         <View style={{ flex: 0.85, justifyContent: "center", marginBottom: 96 }}>
           {/* HERE FOR DEMO SHOWCASE */}
-          <View style={styles.card}>{false ? this.renderYourSong() : this.renderGuess()}</View>
+          <View style={styles.card}>
+            {!this.state.firstSong && this.state.host ? this.renderYourSong() : this.renderGuess()}
+          </View>
         </View>
         <BottomDrawer
           startUp={false}

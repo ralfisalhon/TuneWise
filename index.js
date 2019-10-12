@@ -220,7 +220,76 @@ express()
         });
     })
 
+    // Start a new round and push the song onto the list.
+    // This should be used over POST /push!
+    .post('/startround', (req, res) => {
+        var room_code = req.body.code;
+        var uri       = req.body.song_uri;
+        var id        = req.body.song_id;
+        var u_id      = req.body.user_id;
+
+        if (room_code == null || uri == null || id == null || u_id == null) {
+            res.status(400);
+            res.send("Error: no room code, song URI, song ID, or user ID supplied.");
+            return;
+        }
+
+        db.collection('rooms', (error, collection) => {
+            collection.findOne({code: room_code}, (error, result) => {
+                if (!result) {
+                    res.status(400);
+                    res.send("Error: invalid room code.");
+                    return;
+                }
+
+                // Validate the given user id.
+                collection.findOne({'users.user_id': u_id}, (error, u_result) => {
+                    if (!u_result) {
+                        res.status(400);
+                        res.send("Error: invalid user ID.");
+                        return;
+                    }
+
+                    // Push the new song onto the list.
+                    var new_queue = result.queue;
+                    new_queue.push({song_uri: uri, song_id: id, user_id: u_id});
+
+                    // Reset the round.
+                    var new_round = result.round;
+                    new_round.guesses = [];
+                    collection.updateOne({code: room_code}, 
+                                         {code: room_code, 
+                                          time_created: result.time_created, 
+                                          queue: new_queue,
+                                          users: result.users,
+                                          round: new_round}, 
+                                         (error, result) => {
+                        res.status(200);
+                        res.send();
+                    });
+                });
+            });
+        });
+    })
+
+    // Submit a guess for a song.
+    .post('/guess', (req, res) => {
+        var room_code = req.body.code;
+        var user_id   = req.body.user_id;
+        var guess_id  = req.body.guess_id;
+
+        if (room_code == null || user_id == null || guess_id == null) {
+            res.status(400);
+            res.send("Error: no room code, user ID, or guessed song ID supplied.");
+            return;
+        }
+
+        db.collection('rooms')
+    })
+
     // Push a song into the room's song list.
+    // Look into using POST /startround instead to push a song AND start the
+    // round!
     .post('/push', (req, res) => {
         var room_code = req.body.code;
         var uri       = req.body.song_uri;

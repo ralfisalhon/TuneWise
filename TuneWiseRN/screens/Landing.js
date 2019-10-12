@@ -101,7 +101,7 @@ export class LandingScreen extends React.Component {
 
     return (
       <SafeAreaView style={styles.container}>
-        <Header title={"get ur bop on"} navigate={navigate}></Header>
+        <Header title={"get ur bop on"} navigate={navigate} navigation={this.props.navigation} infoScreen={true}></Header>
         <View style={{ flex: 1, justifyContent: "center" }}>
           <View style={styles.logo}>
             <Image

@@ -10,10 +10,12 @@ import { LinedText } from "./LinedText.js";
 class Header extends Component {
   static defaultProps = {
     back: false,
-    playScreen: false
+    playScreen: false,
+    infoScreen:false
   };
 
-  backButton(navigation, playScreen) {
+  backButton(navigation, playScreen, infoScreen) {
+
     if (playScreen) {
       Alert.alert(
         "Leaving Session",
@@ -29,6 +31,8 @@ class Header extends Component {
         { cancelable: false },
         { onDismiss: () => {} }
       );
+    } else if(infoScreen){
+      navigation.navigate("Info");
     } else {
       navigation.goBack();
     }
@@ -39,13 +43,13 @@ class Header extends Component {
   }
 
   render() {
-    const { title, back, navigate, navigation, hideSettings, playScreen } = this.props;
+    const { title, back, navigate, navigation, hideSettings, playScreen,infoScreen} = this.props;
 
     return (
       <View style={styles.header}>
         <TouchableOpacity
           style={{ width: 24, height: 24 }}
-          onPress={back ? () => this.backButton(navigation, playScreen) : null}
+          onPress={back || infoScreen ? () => this.backButton(navigation, playScreen, infoScreen) : null}
         >
           <Image
             style={{ height: undefined, width: undefined, flex: 1 }}

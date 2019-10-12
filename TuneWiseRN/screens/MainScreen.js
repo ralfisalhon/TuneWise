@@ -96,7 +96,8 @@ export class MainScreen extends React.Component {
   }
 
   gearPressed() {
-    alert("pressed 3 lines");
+    // alert("pressed 3 lines");
+    this.props.navigation.navigate("Settings");
   }
 
   render() {

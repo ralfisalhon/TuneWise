@@ -32,7 +32,8 @@ class SearchResult extends Component {
         let guessed = obj.guessed;
         let correct = obj.correct;
 
-        if (correct) {
+        // console.warn(correct);
+        if (correct === "true") {
           Alert.alert("wow u got it");
         } else {
           Alert.alert("try again oops");

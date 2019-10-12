@@ -25,6 +25,8 @@ import { Header } from "../assets/components/Header";
 import { SafeAreaView } from "react-navigation";
 // import { TextInput } from "react-native-gesture-handler";
 
+const baseURI = "http://tunewise.herokuapp.com";
+
 export class EnterCodeScreen extends React.Component {
   static navigationOptions = {
     header: null
@@ -61,8 +63,45 @@ export class EnterCodeScreen extends React.Component {
       return;
     }
 
-    Alert.alert("let's check! you entered", this.state.sessionCode);
+    console.warn("let's check! you entered: " + this.state.sessionCode);
+
+    this.joinRoom(sessionCode, "Ralfi", navigate);
   }
+
+  joinRoom = async (sessionCode, name, navigate) => {
+    var xhr = new XMLHttpRequest();
+
+    xhr.onreadystatechange = e => {
+      // console.warn(xhr.readyState);
+      if (xhr.readyState !== 4) {
+        return;
+      }
+      if (xhr.status == 200) {
+        var data = xhr.responseText;
+        var obj = JSON.parse(data.replace(/\r?\n|\r/g, ""));
+        if (!obj || !obj.id || !obj.token) {
+          Alert.alert("oopsie, wrong room code");
+        }
+        let id = obj.id;
+        let token = obj.token;
+
+        console.warn(id, token);
+        navigate("Play", {
+          accessToken: token,
+          id,
+          host: false,
+          roomCode: sessionCode
+        });
+      } else {
+        // Alert.alert("Response code", xhr.status.toString());
+        // console.warn(xhr.responseText, xhr.status);
+      }
+    };
+
+    xhr.open("POST", baseURI + "/joinroom");
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xhr.send("code=" + sessionCode + "&name=" + name);
+  };
 
   render() {
     const { accessToken } = this.state;

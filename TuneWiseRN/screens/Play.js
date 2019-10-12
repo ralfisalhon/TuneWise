@@ -17,21 +17,18 @@ import {
 const { width: windowWidth, height: windowHeight } = Dimensions.get("window");
 import BottomDrawer from "rn-bottom-drawer";
 import { SafeAreaView } from "react-navigation";
+var Sound = require("react-native-sound");
 
 import { Header } from "../assets/components/Header";
 import { Song } from "../assets/components/Song";
 import { SearchResult } from "../assets/components/SearchResult";
 
+const baseURI = "http://tunewise.herokuapp.com";
+
 const token =
-  "BQCnSMAuXZDBdLahSJxcYwYJvRp-ai2GT8maGJNZUU2j9G24EO-MG1IHO73Ndf9HfaY0-_4OOmU64UT0_oI3P-jjLHNxVy1zVELFqndJUkJl2DXWoXKKWUFxOViOdsJUmqD0xLIiZ2N-I9OqoNcgB4tm6aXWL4EtpWSrHg89A1OfXP8clz-OYKxa5_yKXPJUF8aMeOa1ZCuK6mg2WQApp1fQwYdALTQFLBspaQSeFQXeY-CeIluueO9A8nKSuPcHv7CBR1kPk0dGjtIpGSeofdVWvCATaTfJ55_rtf4";
+  "BQA7EWyLdgGs9nBWmI7kbCtlPqRIGUP_fa9532BqamkXoiScGDoLZHHooTz-Vyoy6yRvyUpTYhp2_A6QGGW_aYi_9dmv-08fOY2LDyCyCRHG5h3lWl1MFGeQhl3GOiE69jfLhBxqdp_tNl8rBEze9BvTUA6z2RQgBpAv8oyn2dAd7aXnJ7IxL06Nm-ICiLFcJDVN6UXPivD6glQ4tSkz6umsvQhzk-4gEvY94dARObjEy7xyAZhw_0cpVeZlRlpkmB_ymz-YOeYM2axfvHbNajt5QnSXw3Sd850uipE";
 
 const HEADER_HEIGHT = 100;
-
-// {
-//   title: "obscure song 0",
-//   artist: "ashton & the ophids",
-//   imageURI: "https://puu.sh/ErI6Z/c5d481e732.png"
-// }
 
 export class PlayScreen extends React.Component {
   static navigationOptions = {
@@ -47,9 +44,46 @@ export class PlayScreen extends React.Component {
       refresh: false,
       searchResults: [],
       songs: [],
-      searchQuery: ""
+      searchQuery: "",
+      host: false,
+      hostDecided: false,
+      firstSong: true,
+      id: null
     };
   }
+
+  startRound = async (code, song_uri, song_id, user_id) => {
+    var xhr = new XMLHttpRequest();
+
+    xhr.onreadystatechange = e => {
+      // console.warn(xhr.readyState);
+      if (xhr.readyState !== 4) {
+        return;
+      }
+      if (xhr.status == 200) {
+        // var data = xhr.responseText;
+        // var obj = JSON.parse(data.replace(/\r?\n|\r/g, ""));
+        console.warn("Worked");
+        console.warn(xhr.responseText);
+        const sound = new Sound(song_uri, null, error => {
+          if (error) {
+            // do something
+            console.warn(song_uri);
+          }
+          // play when loaded
+          sound.play();
+        });
+      } else {
+        console.warn(xhr.responseText, xhr.status);
+      }
+    };
+
+    xhr.open("POST", baseURI + "/startround");
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xhr.send(
+      "code=" + code + "&song_uri=" + song_uri + "&song_id=" + song_id + "&user_id=" + user_id
+    );
+  };
 
   searchSongCheck(accessToken, query) {
     let that = this;
@@ -71,7 +105,11 @@ export class PlayScreen extends React.Component {
       if (xhr.status == 200) {
         let data = xhr.responseText;
         let obj = JSON.parse(data);
-        this.setState({ searchResults: obj.tracks.items });
+        let temp = obj.tracks.items;
+
+        // remove all songs without preview_url
+
+        this.setState({ searchResults: temp });
         console.log("RALFIII");
         console.log(obj.tracks.items);
       } else if (xhr.status == 401) {
@@ -96,13 +134,18 @@ export class PlayScreen extends React.Component {
     return <Song title={item.title} artist={item.artist} imageURI={item.imageURI} />;
   };
 
-  addToYourQueue(name, artist, imageURI) {
+  addToYourQueue(name, artist, imageURI, item) {
+    console.warn(item);
     let songs = this.state.songs;
     songs.push({
       title: name,
       artist: artist,
       imageURI: imageURI
     });
+    console.warn(this.state.host, this.state.firstSong);
+    if (this.state.host && this.state.firstSong) {
+      this.startRound(this.state.roomCode, item.preview_url, item.id, this.state.id);
+    }
     console.log(songs);
     this.setState({ songs }, () =>
       this.setState({
@@ -120,7 +163,7 @@ export class PlayScreen extends React.Component {
       <SearchResult
         name={item.name}
         artist={item.artists[0].name}
-        callback={(name, artist, image) => this.addToYourQueue(name, artist, image)}
+        callback={(name, artist, image) => this.addToYourQueue(name, artist, image, item)}
         imageURI={
           item.album.images && item.album.images.length > 2
             ? item.album.images[2].url
@@ -272,19 +315,34 @@ export class PlayScreen extends React.Component {
     );
   }
 
+  setHost(host, id, roomCode) {
+    let that = this;
+    setTimeout(function() {
+      that.setState({ host, hostDecided: true, id, roomCode });
+    }, 250);
+  }
+
   render() {
     const { navigate } = this.props.navigation;
-    const { accessToken, sessionName } = this.props.navigation.state.params;
+    const { accessToken, sessionName, host, id, roomCode } = this.props.navigation.state.params;
+    const { hostDecided } = this.state;
+
+    if (!hostDecided) this.setHost(host, id, roomCode);
 
     return (
       <SafeAreaView style={styles.container}>
         <Header
-          title={sessionName}
+          title={host ? sessionName : "player"}
           navigate={navigate}
           navigation={this.props.navigation}
           playScreen={true}
           back={true}
         ></Header>
+        {/* {host ? (
+          <Text style={[styles.text, { marginTop: -10, fontSize: 12, color: "yellow" }]}>
+            HOST MODE
+          </Text>
+        ) : null} */}
         <View style={{ flex: 0.85, justifyContent: "center", marginBottom: 96 }}>
           <View style={styles.card}>{false ? this.renderYourSong() : this.renderGuess()}</View>
         </View>

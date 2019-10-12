@@ -68,6 +68,7 @@ android {
 }
 
 dependencies {
+    implementation project(':react-native-sound')
     implementation project(':rn-spotify-sdk')
     implementation project(':react-native-events')
     implementation project(':react-native-gesture-handler')

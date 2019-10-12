@@ -10,14 +10,15 @@ import {
   TouchableOpacity,
   ScrollView,
   Platform,
-  Alert
+  Alert,
+  FlatList
 } from "react-native";
 const { width: windowWidth, height: windowHeight } = Dimensions.get("window");
-import { human } from "react-native-typography";
 import BottomDrawer from "rn-bottom-drawer";
+import { SafeAreaView } from "react-navigation";
 
 import { Header } from "../assets/components/Header";
-import { SafeAreaView } from "react-navigation";
+import { Song } from "../assets/components/Song";
 
 const HEADER_HEIGHT = 100;
 
@@ -29,14 +30,52 @@ export class PlayScreen extends React.Component {
   constructor() {
     super();
 
-    this.state = {};
+    this.state = {
+      refresh: false,
+      songs: [
+        {
+          title: "obscure song 0",
+          artist: "ashton & the ophids",
+          imageURI: "https://puu.sh/ErI6Z/c5d481e732.png"
+        },
+        {
+          title: "obscure song 1",
+          artist: "ashton & the ophids",
+          imageURI: "https://puu.sh/ErIey/7a23d6457a.png"
+        },
+        {
+          title: "obscure song 2",
+          artist: "ashton & the ophids",
+          imageURI: "https://puu.sh/ErI6Z/c5d481e732.png"
+        },
+        {
+          title: "obscure song 3",
+          artist: "ashton & the ophids",
+          imageURI: "https://puu.sh/ErIey/7a23d6457a.png"
+        },
+        {
+          title: "obscure song 4",
+          artist: "ashton & the ophids",
+          imageURI: "https://puu.sh/ErI6Z/c5d481e732.png"
+        },
+        {
+          title: "obscure song 5",
+          artist: "ashton & the ophids",
+          imageURI: "https://puu.sh/ErIey/7a23d6457a.png"
+        }
+      ]
+    };
   }
 
   addSong() {
-    alert("add song pressed");
+    this.setState({ refresh: !this.state.refresh });
   }
 
   componentDidMount() {}
+
+  renderPlaylist = ({ item, index }) => {
+    return <Song title={item.title} artist={item.artist} imageURI={item.imageURI} />;
+  };
 
   renderDrawer = () => {
     return (
@@ -55,24 +94,16 @@ export class PlayScreen extends React.Component {
           resizeMode={"stretch"}
           source={require("../assets/images/lineGray.png")}
         />
-        <View
-          style={{
-            marginTop: 12,
-            width: windowWidth * 0.88,
-            flexDirection: "row",
-            alignItems: "center"
+        <FlatList
+          extraData={this.state.refresh}
+          ref={ref => {
+            this.flatListRef3 = ref;
           }}
-        >
-          <Image
-            style={{ height: 72, width: 72 }}
-            resizeMode={"stretch"}
-            source={require("../assets/images/song0.png")}
-          />
-          <View style={{ marginHorizontal: 15 }}>
-            <Text style={styles.songTitle}>obscure song 0</Text>
-            <Text style={styles.songArtist}>by ashton & the ophids</Text>
-          </View>
-        </View>
+          showsVerticalScrollIndicator={false}
+          data={this.state.songs}
+          renderItem={this.renderPlaylist}
+          keyExtractor={(item, index) => index.toString()}
+        />
       </View>
     );
   };
@@ -89,10 +120,11 @@ export class PlayScreen extends React.Component {
           navigation={this.props.navigation}
           back={true}
         ></Header>
+        <View style={{ flex: 1, backgroundColor: "red" }}></View>
         <BottomDrawer
           startUp={false}
           containerHeight={windowHeight * 0.7}
-          downDisplay={windowHeight * 0.5}
+          downDisplay={windowHeight * 0.7 - 128}
         >
           {this.renderDrawer()}
         </BottomDrawer>
@@ -116,14 +148,5 @@ const styles = StyleSheet.create({
   },
   text: {
     paddingHorizontal: 5
-  },
-  songTitle: {
-    fontFamily: "Courier",
-    fontSize: 24
-  },
-  songArtist: {
-    fontFamily: "Courier New",
-    fontWeight: "200",
-    fontSize: 14
   }
 });

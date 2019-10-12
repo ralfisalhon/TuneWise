@@ -97,7 +97,7 @@ export class NameSessionScreen extends React.Component {
                   autoCompleteType={"off"}
                   autoCorrect={false}
                   maxLength={20}
-                  placeholderTextColor={"#95a5a6"}
+                  placeholderTextColor={"#bdc3c7"}
                   onChangeText={text => this.updateSessionName(text)}
                 />
               </View>
@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   logo: {
-    height: windowHeight / 3.5,
+    height: windowHeight / 3.4,
     width: windowWidth - 40,
     borderRadius: 20
   },
@@ -138,8 +138,8 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: "gray",
-    paddingHorizontal: 25,
-    paddingVertical: 15,
+    paddingHorizontal: 22,
+    paddingVertical: 12,
     borderRadius: 20
   },
   startGame: {

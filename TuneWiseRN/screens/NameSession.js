@@ -19,9 +19,10 @@ import { LinedText } from "../assets/components/LinedText";
 import { Header } from "../assets/components/Header";
 import { SafeAreaView } from "react-navigation";
 
-export class SongPickScreen extends React.Component {
+export class NameSessionScreen extends React.Component {
   static navigationOptions = {
-    header: null
+    header: null,
+    gesturesEnabled: false
   };
 
   constructor() {
@@ -42,7 +43,7 @@ export class SongPickScreen extends React.Component {
 
     return (
       <SafeAreaView style={styles.container}>
-        <Header title={"name ur session"}></Header>
+        <Header title={"name ur session"} back={true}></Header>
       </SafeAreaView>
     );
   }

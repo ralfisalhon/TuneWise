@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, StyleSheet, Text, Dimensions, TouchableOpacity, Image } from "react-native";
+import { View, StyleSheet, Text, Dimensions, TouchableOpacity, Image, Alert } from "react-native";
 import { human } from "react-native-typography";
 import { SafeAreaView } from "react-navigation";
 
@@ -9,11 +9,29 @@ import { LinedText } from "./LinedText.js";
 
 class Header extends Component {
   static defaultProps = {
-    back: false
+    back: false,
+    playScreen: false
   };
 
-  backButton(navigation) {
-    navigation.goBack();
+  backButton(navigation, playScreen) {
+    if (playScreen) {
+      Alert.alert(
+        "Leaving Session",
+        "Are you sure you want to leave the current session?",
+        [
+          {
+            text: "Cancel",
+            onPress: () => console.log("Cancel Pressed"),
+            style: "cancel"
+          },
+          { text: "OK", onPress: () => navigation.goBack() }
+        ],
+        { cancelable: false },
+        { onDismiss: () => {} }
+      );
+    } else {
+      navigation.goBack();
+    }
   }
 
   gearPressed(navigate) {
@@ -21,13 +39,13 @@ class Header extends Component {
   }
 
   render() {
-    const { title, back, navigate, navigation, hideSettings } = this.props;
+    const { title, back, navigate, navigation, hideSettings, playScreen } = this.props;
 
     return (
       <View style={styles.header}>
         <TouchableOpacity
           style={{ width: 24, height: 24 }}
-          onPress={back ? () => this.backButton(navigation) : null}
+          onPress={back ? () => this.backButton(navigation, playScreen) : null}
         >
           <Image
             style={{ height: undefined, width: undefined, flex: 1 }}

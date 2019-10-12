@@ -273,19 +273,19 @@ express()
     })
 
     // Submit a guess for a song.
-    .post('/guess', (req, res) => {
-        var room_code = req.body.code;
-        var user_id   = req.body.user_id;
-        var guess_id  = req.body.guess_id;
+    // .post('/guess', (req, res) => {
+    //     var room_code = req.body.code;
+    //     var user_id   = req.body.user_id;
+    //     var guess_id  = req.body.guess_id;
 
-        if (room_code == null || user_id == null || guess_id == null) {
-            res.status(400);
-            res.send("Error: no room code, user ID, or guessed song ID supplied.");
-            return;
-        }
+    //     if (room_code == null || user_id == null || guess_id == null) {
+    //         res.status(400);
+    //         res.send("Error: no room code, user ID, or guessed song ID supplied.");
+    //         return;
+    //     }
 
-        db.collection('rooms')
-    })
+    //     db.collection('rooms')
+    // })
 
     // Push a song into the room's song list.
     // Look into using POST /startround instead to push a song AND start the

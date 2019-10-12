@@ -15,7 +15,10 @@ import {
 const { width: windowWidth, height: windowHeight } = Dimensions.get("window");
 import { human } from "react-native-typography";
 
-export class CodeScreen extends React.Component {
+import { Header } from "../assets/components/Header";
+import { SafeAreaView } from "react-navigation";
+
+export class PlayScreen extends React.Component {
   static navigationOptions = {
     header: null
   };
@@ -30,14 +33,18 @@ export class CodeScreen extends React.Component {
 
   render() {
     const { navigate } = this.props.navigation;
+    const { accessToken, sessionName } = this.props.navigation.state.params;
 
     return (
-      <View style={styles.container}>
-        <Text style={human.subheadWhite}>CodeScreen</Text>
-        <TouchableOpacity onPress={() => navigate("Listen")}>
-          <Text style={{ color: "white", marginTop: 10 }}>ENTERED CORRECT CODE BUTTON</Text>
-        </TouchableOpacity>
-      </View>
+      <SafeAreaView style={styles.container}>
+        <Header
+          title={sessionName}
+          navigate={navigate}
+          navigation={this.props.navigation}
+          back={true}
+        ></Header>
+        <Text style={human.subheadWhite}>Hello</Text>
+      </SafeAreaView>
     );
   }
 }
@@ -45,8 +52,7 @@ export class CodeScreen extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#2c2c2c",
-    justifyContent: "center",
+    backgroundColor: "#010d58",
     alignItems: "center"
   }
 });

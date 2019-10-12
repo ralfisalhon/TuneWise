@@ -36,6 +36,7 @@ export class PlayScreen extends React.Component {
     super();
 
     this.state = {
+      oldQuery: "",
       refresh: false,
       searchResults: [],
       songs: [
@@ -73,7 +74,18 @@ export class PlayScreen extends React.Component {
     };
   }
 
+  searchSongCheck(accessToken, query) {
+    let that = this;
+    this.setState({ oldQuery: query });
+    setTimeout(function() {
+      if (that.state.oldQuery == query) {
+        that.searchSong(accessToken, query);
+      }
+    }, 500);
+  }
+
   searchSong = async (accessToken, query) => {
+    if (query.length == 0) this.setState({ searchResults: [] });
     if (query.length < 3) return;
     query = query.split(" ").join("+");
     let xhr = new XMLHttpRequest();
@@ -95,10 +107,6 @@ export class PlayScreen extends React.Component {
     xhr.setRequestHeader("Content-Type", "application/json");
     xhr.send();
   };
-
-  // searchSong(accessToken, query) {
-  //   alert(query);
-  // }
 
   addSong() {
     alert("unimplemented");
@@ -217,7 +225,7 @@ export class PlayScreen extends React.Component {
             autoCorrect={false}
             maxLength={20}
             placeholderTextColor={"#bdc3c7"}
-            onChangeText={text => this.searchSong(token, text)}
+            onChangeText={text => this.searchSongCheck(token, text)}
           />
         </View>
         <FlatList

@@ -68,19 +68,7 @@ export class SettingsScreen extends React.Component {
               <Text style={styles.text}>log out of spotify</Text>
             </TouchableOpacity>
 
-            <View style={styles.credits}>
-              <Text style={styles.text}>
-                {"\n"}
-                credits:
-                {"\n"}
-              </Text>
-              <Text style={styles.text}>
-                ralfi salhon -- front end{"\n"}
-                mohsin rizvi -- back end{"\n"}
-                nihal pai -- ui/ux {"\n"}
-                san akdag -- pm{"\n"}
-              </Text>
-            </View>
+            
           </View>
         </View>
       </SafeAreaView>

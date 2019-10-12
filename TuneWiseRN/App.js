@@ -7,6 +7,8 @@ var { EnterCodeScreen } = require("./screens/EnterCode.js");
 var { InfoScreen } = require("./screens/Info.js");
 
 global.globalAdding = false;
+global.globalRoomCode = null;
+global.globalUserID = null;
 
 const MainNavigator = createStackNavigator({
   Landing: { screen: LandingScreen },

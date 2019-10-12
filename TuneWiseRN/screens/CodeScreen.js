@@ -15,7 +15,7 @@ import {
 const { width: windowWidth, height: windowHeight } = Dimensions.get("window");
 import { human } from "react-native-typography";
 
-export class SongPickScreen extends React.Component {
+export class CodeScreen extends React.Component {
   static navigationOptions = {
     header: null
   };
@@ -23,22 +23,20 @@ export class SongPickScreen extends React.Component {
   constructor() {
     super();
 
-    this.state = {
-      accessToken: null
-    };
+    this.state = {};
   }
 
-  componentDidMount() {
-    const { accessToken } = this.props.navigation.state.params;
-    this.setState({ accessToken });
-  }
+  componentDidMount() {}
 
   render() {
-    const { accessToken } = this.state;
+    const { navigate } = this.props.navigation;
 
     return (
       <View style={styles.container}>
-        <Text style={human.subheadWhite}>HostScreen</Text>
+        <Text style={human.subheadWhite}>CodeScreen</Text>
+        <TouchableOpacity onPress={() => navigate("Listen")}>
+          <Text style={{ color: "white", marginTop: 10 }}>ENTERED CORRECT CODE BUTTON</Text>
+        </TouchableOpacity>
       </View>
     );
   }
@@ -50,8 +48,5 @@ const styles = StyleSheet.create({
     backgroundColor: "#2c2c2c",
     justifyContent: "center",
     alignItems: "center"
-  },
-  temp: {
-    backgroundColor: "blue"
   }
 });

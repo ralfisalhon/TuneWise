@@ -68,6 +68,9 @@ export class MainScreen extends React.Component {
   }
 
   connectWithSpotify(navigate) {
+    if (this.state.accessToken) {
+      navigate("SongPick", this.state.accessToken);
+    }
     Spotify.login()
       .then(loggedIn => {
         if (loggedIn) {
@@ -88,32 +91,69 @@ export class MainScreen extends React.Component {
     return layoutMeasurement.height + contentOffset.y >= contentSize.height;
   };
 
+  threeLinesPressed() {
+    alert("pressed 3 lines");
+  }
+
+  gearPressed() {
+    alert("pressed 3 lines");
+  }
+
   render() {
     const { navigate } = this.props.navigation;
+    const { accessToken } = this.state;
 
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.header}>
-          <Text style={styles.text}>O</Text>
-          <Text style={styles.text}>O</Text>
+          <TouchableOpacity
+            style={{ width: 24, height: 24 }}
+            onPress={() => this.threeLinesPressed()}
+          >
+            <Image
+              style={{ height: undefined, width: undefined, flex: 1 }}
+              resizeMode={"contain"}
+              source={require("../assets/images/3lines.png")}
+            />
+          </TouchableOpacity>
+          <View>
+            <Text style={styles.text}>--- get ur bop on ---</Text>
+          </View>
+          <TouchableOpacity style={{ width: 24, height: 24 }} onPress={() => this.gearPressed()}>
+            <Image
+              style={{ height: undefined, width: undefined, flex: 1 }}
+              resizeMode={"contain"}
+              source={require("../assets/images/gear.png")}
+            />
+          </TouchableOpacity>
         </View>
-        <View style={styles.logo}>
-          <Image
-            style={{ height: undefined, width: undefined, flex: 1 }}
-            resizeMode={"contain"}
-            source={require("../assets/images/512.png")}
-          />
+        <View style={{ flex: 1, justifyContent: "center" }}>
+          <View style={styles.logo}>
+            <Image
+              style={{ height: undefined, width: undefined, flex: 1 }}
+              resizeMode={"contain"}
+              source={require("../assets/images/logo.png")}
+            />
+          </View>
+
+          <View style={styles.buttons}>
+            <TouchableOpacity
+              style={[styles.button, styles.gameAsHost]}
+              onPress={() => this.connectWithSpotify(navigate)}
+            >
+              <Text style={[styles.text, styles.gameAsHostText]}>create session.</Text>
+            </TouchableOpacity>
+            <View style={{ marginVertical: 20 }}>
+              <Text style={styles.text}>----- or -----</Text>
+            </View>
+            <TouchableOpacity
+              style={[styles.button, styles.joinExisting]}
+              onPress={() => navigate("CodeScreen", { accessToken })}
+            >
+              <Text style={styles.text}>join existing.</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-        {/* <View style={styles.card}></View> */}
-        <TouchableOpacity onPress={() => navigate("Listen")}>
-          <Text style={styles.text}>TuneWise</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => this.connectWithSpotify(navigate)}>
-          <Text style={styles.text}>Start Game as Host</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.text}>Join Existing Game</Text>
-        </TouchableOpacity>
       </SafeAreaView>
     );
   }
@@ -122,23 +162,23 @@ export class MainScreen extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#2c2c2c",
+    backgroundColor: "#010d58",
     alignItems: "center"
   },
   logo: {
-    height: windowHeight / 3,
-    width: windowHeight / 3,
+    height: windowHeight / 2.75,
+    width: windowWidth - 40,
     borderRadius: 20
   },
   title: {
     color: "white",
-    fontFamily: "Avenir Next",
+    fontFamily: "Courier New",
     fontSize: 24,
     fontWeight: "600"
   },
   text: {
     color: "white",
-    fontFamily: "Avenir Next",
+    fontFamily: "Courier",
     fontSize: 18
   },
   card: {
@@ -152,18 +192,33 @@ const styles = StyleSheet.create({
   header: {
     width: windowWidth,
     height: 50,
-    backgroundColor: "red",
     justifyContent: "space-between",
     flexDirection: "row",
     alignItems: "center",
     margin: 5,
-    padding: 10
+    paddingHorizontal: 30,
+    marginTop: 20
   },
   button: {
     backgroundColor: "gray",
-    paddingHorizontal: 30,
-    paddingVertical: 15,
+    paddingHorizontal: 25,
+    paddingVertical: 12,
     borderRadius: 20,
     margin: 10
+  },
+  gameAsHost: {
+    backgroundColor: "white"
+  },
+  gameAsHostText: {
+    color: "#010d58"
+  },
+  joinExisting: {
+    backgroundColor: null,
+    borderWidth: 1,
+    borderColor: "white"
+  },
+  buttons: {
+    marginTop: 60,
+    alignItems: "center"
   }
 });

@@ -33,7 +33,7 @@ export class ListenScreen extends React.Component {
 
     return (
       <View style={styles.container}>
-        <Text style={human.subheadWhite}>Hey</Text>
+        <Text style={human.subheadWhite}>ListenScreen</Text>
       </View>
     );
   }

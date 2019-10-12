@@ -110,7 +110,7 @@ export class NameSessionScreen extends React.Component {
             </View>
           </TouchableWithoutFeedback>
         </KeyboardAvoidingView>
-        <View style={{ height: windowHeight * 0.32 }}>
+        <View style={{ height: windowHeight * 0.28 }}>
           <View style={{ justifyContent: "center", alignItems: "center" }}>
             <Switch
               ios_backgroundColor={"#ce47a5"}
@@ -165,7 +165,7 @@ const styles = StyleSheet.create({
   },
   startGame: {
     backgroundColor: "white",
-    marginTop: 20
+    marginTop: 25
   },
   text: {
     color: "#010d58",

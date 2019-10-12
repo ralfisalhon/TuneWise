@@ -23,15 +23,9 @@ import { Song } from "../assets/components/Song";
 import { SearchResult } from "../assets/components/SearchResult";
 
 const token =
-  "BQCnSMAuXZDBdLahSJxcYwYJvRp-ai2GT8maGJNZUU2j9G24EO-MG1IHO73Ndf9HfaY0-_4OOmU64UT0_oI3P-jjLHNxVy1zVELFqndJUkJl2DXWoXKKWUFxOViOdsJUmqD0xLIiZ2N-I9OqoNcgB4tm6aXWL4EtpWSrHg89A1OfXP8clz-OYKxa5_yKXPJUF8aMeOa1ZCuK6mg2WQApp1fQwYdALTQFLBspaQSeFQXeY-CeIluueO9A8nKSuPcHv7CBR1kPk0dGjtIpGSeofdVWvCATaTfJ55_rtf4";
+  "BQB-SuJOVMYUJ60WTKZANa6WyQJ3zLQSdCepjHkIhMN41MQ7KifJDODhO0YujwU4wTgd5niQfyJ9fCpa3-GRrizqF8mlcV_ADosqPoRyKg3Q83jc00P9VB1Fgar-6ndI19Z4S8wpfr_NZyg9luQ4lpAY0jJyFcHnlzTeCpfKgOPF3KmsJQZFVvmIv5P0fbF7e9KXvwdO8tHHTPv17JHwIGMjYMe153Tw1rDZi3uWaEVvRR-zbHoMOoQiUVG-yspICFkxj6kNErVcjNnGA7mPVieujwgkVTrpuNP1XkU";
 
 const HEADER_HEIGHT = 100;
-
-// {
-//   title: "obscure song 0",
-//   artist: "ashton & the ophids",
-//   imageURI: "https://puu.sh/ErI6Z/c5d481e732.png"
-// }
 
 export class PlayScreen extends React.Component {
   static navigationOptions = {

@@ -3,6 +3,14 @@ var express    = require('express')
 var path       = require('path')
 var PORT       = process.env.PORT || 3000;
 
+var mongoUri = 'mongodb://' + process.env.DBUSER + ':' + process.env.DBPASS + 
+               '@' + process.env.URL
+var mongo  = require('mongodb').MongoClient;
+var format = require('util').format;
+var db = mongo.connect(mongoUri, function(error, dbconnection) {
+	db = dbconnection;
+});
+
 express()
     .use(bodyparser.json())
     .use(bodyparser.urlencoded({extended: true}))

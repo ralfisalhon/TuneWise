@@ -74,9 +74,9 @@ export class MainScreen extends React.Component {
           const accessToken = Spotify.getSession().accessToken;
           const refreshToken = Spotify.getSession().refreshToken;
           // Save refreshToken to DefaultPreference
-          Alert.alert(accessToken, refreshToken);
+          // Alert.alert(accessToken, refreshToken);
           this.setState({ accessToken, refreshToken });
-          // navigate("Home", { accessToken });
+          navigate("SongPick", { accessToken });
         }
       })
       .catch(error => {

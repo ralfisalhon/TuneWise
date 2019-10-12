@@ -39,7 +39,8 @@ export class NameSessionScreen extends React.Component {
     this.state = {
       accessToken: null,
       sessionName: null,
-      multiPhone: false
+      multiPhone: false,
+      code: null
     };
   }
 
@@ -67,12 +68,13 @@ export class NameSessionScreen extends React.Component {
       if (xhr.status == 200) {
         var data = xhr.responseText;
         var obj = JSON.parse(data.replace(/\r?\n|\r/g, ""));
-        // console.warn(obj);
-        navigate("Play", {
-          accessToken: accessToken,
-          sessionName: this.state.sessionName,
-          host: true
-        });
+        console.warn(obj);
+        // navigate("Play", {
+        //   accessToken: accessToken,
+        //   sessionName: this.state.sessionName,
+        //   host: true
+        // });
+        this.joinRoom(obj.code, "Ralfi2", navigate);
       } else {
         // console.warn(xhr.responseText, xhr.status);
       }
@@ -81,6 +83,43 @@ export class NameSessionScreen extends React.Component {
     xhr.open("POST", baseURI + "/bookroom");
     xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
     xhr.send("token=" + accessToken);
+  };
+
+  joinRoom = async (sessionCode, name, navigate) => {
+    var xhr = new XMLHttpRequest();
+
+    xhr.onreadystatechange = e => {
+      // console.warn(xhr.readyState);
+      if (xhr.readyState !== 4) {
+        return;
+      }
+      if (xhr.status == 200) {
+        var data = xhr.responseText;
+        var obj = JSON.parse(data.replace(/\r?\n|\r/g, ""));
+        if (!obj || !obj.id || !obj.token) {
+          Alert.alert("oopsie, wrong room code");
+        }
+        let id = obj.id;
+        let token = obj.token;
+
+        console.warn(id, token);
+        navigate("Play", {
+          accessToken: token,
+          sessionName: this.state.sessionName,
+          id,
+          host: true,
+          roomCode: sessionCode
+        });
+        this.setState({ id });
+      } else {
+        // Alert.alert("Response code", xhr.status.toString());
+        // console.warn(xhr.responseText, xhr.status);
+      }
+    };
+
+    xhr.open("POST", baseURI + "/joinroom");
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xhr.send("code=" + sessionCode + "&name=" + name);
   };
 
   checkInput(navigate, accessToken) {

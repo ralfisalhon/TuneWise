@@ -17,6 +17,7 @@ import {
 const { width: windowWidth, height: windowHeight } = Dimensions.get("window");
 import BottomDrawer from "rn-bottom-drawer";
 import { SafeAreaView } from "react-navigation";
+var Sound = require("react-native-sound");
 
 import { Header } from "../assets/components/Header";
 import { Song } from "../assets/components/Song";
@@ -52,7 +53,6 @@ export class PlayScreen extends React.Component {
   }
 
   startRound = async (code, song_uri, song_id, user_id) => {
-    console.warn("HGEEETTT");
     var xhr = new XMLHttpRequest();
 
     xhr.onreadystatechange = e => {
@@ -65,6 +65,14 @@ export class PlayScreen extends React.Component {
         // var obj = JSON.parse(data.replace(/\r?\n|\r/g, ""));
         console.warn("Worked");
         console.warn(xhr.responseText);
+        const sound = new Sound(song_uri, null, error => {
+          if (error) {
+            // do something
+            console.warn(song_uri);
+          }
+          // play when loaded
+          sound.play();
+        });
       } else {
         console.warn(xhr.responseText, xhr.status);
       }
@@ -97,7 +105,11 @@ export class PlayScreen extends React.Component {
       if (xhr.status == 200) {
         let data = xhr.responseText;
         let obj = JSON.parse(data);
-        this.setState({ searchResults: obj.tracks.items });
+        let temp = obj.tracks.items;
+
+        // remove all songs without preview_url
+
+        this.setState({ searchResults: temp });
         console.log("RALFIII");
         console.log(obj.tracks.items);
       } else if (xhr.status == 401) {
@@ -122,7 +134,8 @@ export class PlayScreen extends React.Component {
     return <Song title={item.title} artist={item.artist} imageURI={item.imageURI} />;
   };
 
-  addToYourQueue(name, artist, imageURI) {
+  addToYourQueue(name, artist, imageURI, item) {
+    console.warn(item);
     let songs = this.state.songs;
     songs.push({
       title: name,
@@ -131,7 +144,7 @@ export class PlayScreen extends React.Component {
     });
     console.warn(this.state.host, this.state.firstSong);
     if (this.state.host && this.state.firstSong) {
-      this.startRound(this.state.roomCode, "song_uri", "06AKEBrKUckW0KREUWRnvT", this.state.id);
+      this.startRound(this.state.roomCode, item.preview_url, item.id, this.state.id);
     }
     console.log(songs);
     this.setState({ songs }, () =>
@@ -150,7 +163,7 @@ export class PlayScreen extends React.Component {
       <SearchResult
         name={item.name}
         artist={item.artists[0].name}
-        callback={(name, artist, image) => this.addToYourQueue(name, artist, image)}
+        callback={(name, artist, image) => this.addToYourQueue(name, artist, image, item)}
         imageURI={
           item.album.images && item.album.images.length > 2
             ? item.album.images[2].url

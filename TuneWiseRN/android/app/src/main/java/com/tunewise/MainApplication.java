@@ -3,6 +3,7 @@ package com.tunewise;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.zmxv.RNSound.RNSoundPackage;
 import com.spotify.sdk.android.authentication.RNSpotifyPackage;
 import com.lufinkey.react.eventemitter.RNEventEmitterPackage;
 import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
@@ -27,6 +28,7 @@ public class MainApplication extends Application implements ReactApplication {
     @Override
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(new MainReactPackage(),
+            new RNSoundPackage(),
             new RNSpotifyPackage(),
             new RNEventEmitterPackage(), new RNGestureHandlerPackage());
     }

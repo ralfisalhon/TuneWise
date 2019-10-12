@@ -27,7 +27,7 @@ export class SettingsScreen extends React.Component {
   constructor() {
     super();
     this.state = {
-      value: false
+      value: true
     };
   }
   buttonFunc(value) {
@@ -67,8 +67,6 @@ export class SettingsScreen extends React.Component {
             >
               <Text style={styles.text}>log out of spotify</Text>
             </TouchableOpacity>
-
-            
           </View>
         </View>
       </SafeAreaView>

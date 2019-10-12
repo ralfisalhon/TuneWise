@@ -48,33 +48,35 @@ export class PlayScreen extends React.Component {
       host: false,
       hostDecided: false,
       firstSong: true,
-      id: null
+      id: null,
+      roomCode: null
     };
   }
 
   startRound = async (code, song_uri, song_id, user_id) => {
+    console.warn("start round");
     var xhr = new XMLHttpRequest();
 
     xhr.onreadystatechange = e => {
-      // console.warn(xhr.readyState);
+      console.warn(xhr.readyState);
       if (xhr.readyState !== 4) {
         return;
       }
       if (xhr.status == 200) {
-        // var data = xhr.responseText;
+        var data = xhr.responseText;
         // var obj = JSON.parse(data.replace(/\r?\n|\r/g, ""));
         console.warn("Worked");
-        console.warn(xhr.responseText);
+        // console.warn(xhr.responseText);
         const sound = new Sound(song_uri, null, error => {
           if (error) {
             // do something
-            console.warn(song_uri);
+            // console.warn(song_uri);
           }
           // play when loaded
           sound.play();
         });
       } else {
-        console.warn(xhr.responseText, xhr.status);
+        // console.warn(xhr.responseText, xhr.status);
       }
     };
 
@@ -135,14 +137,14 @@ export class PlayScreen extends React.Component {
   };
 
   addToYourQueue(name, artist, imageURI, item) {
-    console.warn(item);
+    // console.warn(item);
     let songs = this.state.songs;
     songs.push({
       title: name,
       artist: artist,
       imageURI: imageURI
     });
-    console.warn(this.state.host, this.state.firstSong);
+    // console.warn(this.state.host, this.state.firstSong);
     if (this.state.host && this.state.firstSong) {
       this.startRound(this.state.roomCode, item.preview_url, item.id, this.state.id);
     }
@@ -161,6 +163,7 @@ export class PlayScreen extends React.Component {
   renderSearchResults = ({ item, index }) => {
     return (
       <SearchResult
+        item={item}
         name={item.name}
         artist={item.artists[0].name}
         callback={(name, artist, image) => this.addToYourQueue(name, artist, image, item)}
@@ -290,7 +293,7 @@ export class PlayScreen extends React.Component {
             autoCorrect={false}
             maxLength={20}
             placeholderTextColor={"#bdc3c7"}
-            onChangeText={text => this.searchSongCheck(token, text)}
+            onChangeText={text => this.searchSongCheck(this.state.accessToken, text)}
           />
         </View>
         {this.state.topText == "add a song" ? (
@@ -315,11 +318,14 @@ export class PlayScreen extends React.Component {
     );
   }
 
-  setHost(host, id, roomCode) {
+  setHost(host, id, roomCode, accessToken) {
     let that = this;
     setTimeout(function() {
-      that.setState({ host, hostDecided: true, id, roomCode });
+      that.setState({ host, hostDecided: true, id, roomCode, accessToken });
     }, 250);
+
+    globalRoomCode = roomCode;
+    globalUserID = id;
   }
 
   render() {
@@ -327,7 +333,7 @@ export class PlayScreen extends React.Component {
     const { accessToken, sessionName, host, id, roomCode } = this.props.navigation.state.params;
     const { hostDecided } = this.state;
 
-    if (!hostDecided) this.setHost(host, id, roomCode);
+    if (!hostDecided) this.setHost(host, id, roomCode, accessToken);
 
     return (
       <SafeAreaView style={styles.container}>
@@ -338,12 +344,8 @@ export class PlayScreen extends React.Component {
           playScreen={true}
           back={true}
         ></Header>
-        {/* {host ? (
-          <Text style={[styles.text, { marginTop: -10, fontSize: 12, color: "yellow" }]}>
-            HOST MODE
-          </Text>
-        ) : null} */}
         <View style={{ flex: 0.85, justifyContent: "center", marginBottom: 96 }}>
+          {/* HERE FOR DEMO SHOWCASE */}
           <View style={styles.card}>{false ? this.renderYourSong() : this.renderGuess()}</View>
         </View>
         <BottomDrawer

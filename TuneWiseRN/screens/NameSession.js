@@ -68,7 +68,7 @@ export class NameSessionScreen extends React.Component {
       if (xhr.status == 200) {
         var data = xhr.responseText;
         var obj = JSON.parse(data.replace(/\r?\n|\r/g, ""));
-        console.warn(obj);
+        // console.warn(obj);
         // navigate("Play", {
         //   accessToken: accessToken,
         //   sessionName: this.state.sessionName,
@@ -102,7 +102,7 @@ export class NameSessionScreen extends React.Component {
         let id = obj.id;
         let token = obj.token;
 
-        console.warn(id, token);
+        // console.warn(id, token);
         navigate("Play", {
           accessToken: token,
           sessionName: this.state.sessionName,

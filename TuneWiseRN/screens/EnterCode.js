@@ -85,7 +85,7 @@ export class EnterCodeScreen extends React.Component {
         let id = obj.id;
         let token = obj.token;
 
-        console.warn(id, token);
+        // console.warn(id, token);
         navigate("Play", {
           accessToken: token,
           id,

@@ -65,10 +65,10 @@ export class EnterCodeScreen extends React.Component {
 
     console.warn("let's check! you entered: " + this.state.sessionCode);
 
-    this.joinRoom(sessionCode, "Ralfi");
+    this.joinRoom(sessionCode, "Ralfi", navigate);
   }
 
-  joinRoom = async (sessionCode, name) => {
+  joinRoom = async (sessionCode, name, navigate) => {
     var xhr = new XMLHttpRequest();
 
     xhr.onreadystatechange = e => {
@@ -86,6 +86,12 @@ export class EnterCodeScreen extends React.Component {
         let token = obj.token;
 
         console.warn(id, token);
+        navigate("Play", {
+          accessToken: token,
+          id,
+          host: false,
+          roomCode: sessionCode
+        });
       } else {
         // Alert.alert("Response code", xhr.status.toString());
         // console.warn(xhr.responseText, xhr.status);

@@ -22,6 +22,8 @@ import { Header } from "../assets/components/Header";
 import { Song } from "../assets/components/Song";
 import { SearchResult } from "../assets/components/SearchResult";
 
+const baseURI = "http://tunewise.herokuapp.com";
+
 const token =
   "BQA7EWyLdgGs9nBWmI7kbCtlPqRIGUP_fa9532BqamkXoiScGDoLZHHooTz-Vyoy6yRvyUpTYhp2_A6QGGW_aYi_9dmv-08fOY2LDyCyCRHG5h3lWl1MFGeQhl3GOiE69jfLhBxqdp_tNl8rBEze9BvTUA6z2RQgBpAv8oyn2dAd7aXnJ7IxL06Nm-ICiLFcJDVN6UXPivD6glQ4tSkz6umsvQhzk-4gEvY94dARObjEy7xyAZhw_0cpVeZlRlpkmB_ymz-YOeYM2axfvHbNajt5QnSXw3Sd850uipE";
 
@@ -43,9 +45,37 @@ export class PlayScreen extends React.Component {
       songs: [],
       searchQuery: "",
       host: false,
-      hostDecided: false
+      hostDecided: false,
+      firstSong: true,
+      id: null
     };
   }
+
+  startRound = async (code, song_uri, song_id, user_id) => {
+    console.warn("HGEEETTT");
+    var xhr = new XMLHttpRequest();
+
+    xhr.onreadystatechange = e => {
+      // console.warn(xhr.readyState);
+      if (xhr.readyState !== 4) {
+        return;
+      }
+      if (xhr.status == 200) {
+        // var data = xhr.responseText;
+        // var obj = JSON.parse(data.replace(/\r?\n|\r/g, ""));
+        console.warn("Worked");
+        console.warn(xhr.responseText);
+      } else {
+        console.warn(xhr.responseText, xhr.status);
+      }
+    };
+
+    xhr.open("POST", baseURI + "/startround");
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xhr.send(
+      "code=" + code + "&song_uri=" + song_uri + "&song_id=" + song_id + "&user_id=" + user_id
+    );
+  };
 
   searchSongCheck(accessToken, query) {
     let that = this;
@@ -84,10 +114,6 @@ export class PlayScreen extends React.Component {
   addSong() {
     this.setState({ topText: "add a song" });
     globalAdding = true;
-
-    if (this.state.host && this.state.firstSong) {
-      this.startRound();
-    }
   }
 
   componentDidMount() {}
@@ -103,6 +129,10 @@ export class PlayScreen extends React.Component {
       artist: artist,
       imageURI: imageURI
     });
+    console.warn(this.state.host, this.state.firstSong);
+    if (this.state.host && this.state.firstSong) {
+      this.startRound(this.state.roomCode, "song_uri", "06AKEBrKUckW0KREUWRnvT", this.state.id);
+    }
     console.log(songs);
     this.setState({ songs }, () =>
       this.setState({
@@ -272,34 +302,34 @@ export class PlayScreen extends React.Component {
     );
   }
 
-  setHost() {
+  setHost(host, id, roomCode) {
     let that = this;
     setTimeout(function() {
-      that.setState({ host: true, hostDecided: true });
+      that.setState({ host, hostDecided: true, id, roomCode });
     }, 250);
   }
 
   render() {
     const { navigate } = this.props.navigation;
-    const { accessToken, sessionName, host } = this.props.navigation.state.params;
+    const { accessToken, sessionName, host, id, roomCode } = this.props.navigation.state.params;
     const { hostDecided } = this.state;
 
-    if (host && !hostDecided) this.setHost();
+    if (!hostDecided) this.setHost(host, id, roomCode);
 
     return (
       <SafeAreaView style={styles.container}>
         <Header
-          title={sessionName}
+          title={host ? sessionName : "player"}
           navigate={navigate}
           navigation={this.props.navigation}
           playScreen={true}
           back={true}
         ></Header>
-        {host ? (
+        {/* {host ? (
           <Text style={[styles.text, { marginTop: -10, fontSize: 12, color: "yellow" }]}>
             HOST MODE
           </Text>
-        ) : null}
+        ) : null} */}
         <View style={{ flex: 0.85, justifyContent: "center", marginBottom: 96 }}>
           <View style={styles.card}>{false ? this.renderYourSong() : this.renderGuess()}</View>
         </View>

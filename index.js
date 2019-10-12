@@ -33,8 +33,14 @@ express()
             collection.findOne({code: room_code}, (error, result) => {
                 // Generate a new random room until we don't have conflicts.
                 // This isn't ideal, but this is also a hackathon
-                while (result.code === room_code) {
-                    room_code = string(Math.random() * (MAX_CODE - MIN_CODE) + MAX_CODE);
+                if (result) {
+                    while (result.code === room_code) {
+                        // Remove rooms older than 4 hours
+                        if (result.time_created > (Date.now() - (4 * 1000 * 60 * 60))) {
+                            break;
+                        }
+                        room_code = string(Math.random() * (MAX_CODE - MIN_CODE) + MAX_CODE);
+                    }
                 }
 
                 room = {code: room_code, time_created: Date.now()};

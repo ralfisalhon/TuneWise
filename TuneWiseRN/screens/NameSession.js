@@ -14,7 +14,8 @@ import {
   TextInput,
   KeyboardAvoidingView,
   TouchableWithoutFeedback,
-  Keyboard
+  Keyboard,
+  Switch
 } from "react-native";
 const { width: windowWidth, height: windowHeight } = Dimensions.get("window");
 import { human } from "react-native-typography";
@@ -35,7 +36,8 @@ export class NameSessionScreen extends React.Component {
 
     this.state = {
       accessToken: null,
-      sessionName: null
+      sessionName: null,
+      multiPhone: false
     };
   }
 
@@ -46,6 +48,10 @@ export class NameSessionScreen extends React.Component {
 
   updateSessionName(sessionName) {
     this.setState({ sessionName });
+  }
+
+  toggleMultiPhone(multiPhone) {
+    this.setState({ multiPhone });
   }
 
   checkInput(navigate, accessToken) {
@@ -101,15 +107,30 @@ export class NameSessionScreen extends React.Component {
                   onChangeText={text => this.updateSessionName(text)}
                 />
               </View>
-              <TouchableOpacity
-                style={[styles.button, styles.startGame]}
-                onPress={() => this.checkInput(navigate, accessToken)}
-              >
-                <Text style={styles.text}>start game.</Text>
-              </TouchableOpacity>
             </View>
           </TouchableWithoutFeedback>
         </KeyboardAvoidingView>
+        <View style={{ height: windowHeight * 0.32 }}>
+          <View style={{ justifyContent: "center", alignItems: "center" }}>
+            <Switch
+              ios_backgroundColor={"#ce47a5"}
+              trackColor={"black"}
+              thumbColor={"white"}
+              style={styles.switch}
+              onValueChange={value => this.toggleMultiPhone(value)}
+              value={this.state.multiPhone}
+            />
+            <Text style={[styles.text, { color: "white", fontSize: 18, marginTop: 8 }]}>
+              multi-phone session
+            </Text>
+          </View>
+          <TouchableOpacity
+            style={[styles.button, styles.startGame]}
+            onPress={() => this.checkInput(navigate, accessToken)}
+          >
+            <Text style={styles.text}>start game.</Text>
+          </TouchableOpacity>
+        </View>
       </SafeAreaView>
     );
   }
@@ -138,16 +159,20 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: "gray",
-    paddingHorizontal: 22,
-    paddingVertical: 12,
+    paddingHorizontal: 25,
+    paddingVertical: 18,
     borderRadius: 20
   },
   startGame: {
-    backgroundColor: "white"
+    backgroundColor: "white",
+    marginTop: 20
   },
   text: {
     color: "#010d58",
     fontFamily: "Courier",
     fontSize: 22
   }
+  // switch: {
+  //   height: 40
+  // }
 });

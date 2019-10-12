@@ -15,7 +15,7 @@ class Song extends Component {
         style={{
           flexDirection: "row",
           alignItems: "center",
-          marginVertical: 12,
+          marginVertical: 8,
           width: windowWidth * 0.88
         }}
       >
@@ -24,8 +24,11 @@ class Song extends Component {
           resizeMode={"stretch"}
           source={{ uri: imageURI }}
         />
-        <View style={{ marginHorizontal: 15 }}>
-          <Text style={styles.songTitle}>{title}</Text>
+        <View style={{ marginLeft: 10 }}>
+          <Text style={styles.songTitle} numberOfLines={1}>
+            {title.substring(0, 15)}
+            {title.length > 15 ? "..." : null}
+          </Text>
           <Text style={styles.songArtist}>by {artist}</Text>
         </View>
       </View>

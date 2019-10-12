@@ -4,6 +4,8 @@ var { NameSessionScreen } = require("./screens/NameSession.js");
 var { SettingsScreen } = require("./screens/Settings.js");
 var { PlayScreen } = require("./screens/Play.js");
 
+global.globalAdding = false;
+
 const MainNavigator = createStackNavigator({
   Landing: { screen: LandingScreen },
   NameSession: { screen: NameSessionScreen },

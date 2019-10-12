@@ -16,7 +16,7 @@ const { width: windowWidth, height: windowHeight } = Dimensions.get("window");
 import { human, material } from "react-native-typography";
 import { SafeAreaView } from "react-navigation";
 
-// import Spotify from "rn-spotify-sdk";
+import Spotify from "rn-spotify-sdk";
 
 const spotifyOptions = {
   clientID: "0aeb9b1df687428fabdbbd115673d64c",
@@ -44,11 +44,14 @@ export class MainScreen extends React.Component {
   constructor() {
     super();
 
-    this.state = {};
+    this.state = {
+      accessToken: null,
+      refreshToken: null
+    };
   }
 
   componentDidMount() {
-    // this.initializeSpotify();
+    this.initializeSpotify();
   }
 
   initializeSpotify() {
@@ -57,7 +60,6 @@ export class MainScreen extends React.Component {
       Spotify.initialize(spotifyOptions)
         .then(loggedIn => {
           that.setState({ spotifyInitialized: true });
-          Alert.alert("AHH");
         })
         .catch(error => {
           Alert.alert("Error!", error.message);
@@ -72,7 +74,9 @@ export class MainScreen extends React.Component {
           const accessToken = Spotify.getSession().accessToken;
           const refreshToken = Spotify.getSession().refreshToken;
           // Save refreshToken to DefaultPreference
-          navigate("Home", { accessToken });
+          Alert.alert(accessToken, refreshToken);
+          this.setState({ accessToken, refreshToken });
+          // navigate("Home", { accessToken });
         }
       })
       .catch(error => {

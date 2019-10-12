@@ -27,7 +27,7 @@ express()
     })
 
     // Get the next element in the queue WITHOUT dequeueing it. Sends
-    // {song_uri: "", song_id: ""} if the queue is empty.
+    // {song_uri: "", song_id: "", user_id: ""} if the queue is empty.
     .get('/topqueue', (req, res) => {
         var room_code = req.query.code;
 
@@ -47,10 +47,11 @@ express()
 
                 res.status(200);
                 if (result.queue.length == 0) {
-                    res.send({song_uri: "", song_id: ""});
+                    res.send({song_uri: "", song_id: "", user_id: ""});
                 } else {
                     res.send({song_uri: result.queue[0].song_uri,
-                              song_id: result.queue[0].song_id});
+                              song_id: result.queue[0].song_id,
+                              user_id: result.queue[0].user_id});
                 }
             });
         });
@@ -169,10 +170,11 @@ express()
         var room_code = req.body.code;
         var uri       = req.body.song_uri;
         var id        = req.body.song_id;
+        var u_id      = req.body.user_id;
 
-        if (room_code == null || uri == null || id == null) {
+        if (room_code == null || uri == null || id == null || u_id == null) {
             res.status(400);
-            res.send("Error: no room code, song URI, or song ID supplied.");
+            res.send("Error: no room code, song URI, song ID, or user ID supplied.");
             return;
         }
 
@@ -184,23 +186,33 @@ express()
                     return;
                 }
 
-                var new_queue = result.queue;
-                new_queue.push({song_uri: uri, song_id: id});
-                collection.updateOne({code: room_code}, 
-                                     {code: room_code, 
-                                      time_created: result.time_created, 
-                                      queue: new_queue,
-                                      users: result.users}, 
-                                     (error, result) => {
-                    res.status(200);
-                    res.send();
+                // Validate the given user id.
+                collection.findOne({'users.user_id': u_id}, (error, u_result) => {
+                    if (!u_result) {
+                        res.status(400);
+                        res.send("Error: invalid user ID.");
+                        return;
+                    }
+
+                    // Push the new element onto the queue.
+                    var new_queue = result.queue;
+                    new_queue.push({song_uri: uri, song_id: id, user_id: u_id});
+                    collection.updateOne({code: room_code}, 
+                                         {code: room_code, 
+                                          time_created: result.time_created, 
+                                          queue: new_queue,
+                                          users: result.users}, 
+                                         (error, result) => {
+                        res.status(200);
+                        res.send();
+                    });
                 });
             });
         });
     })
 
     // Get the next song from the queue, removing it. Sends
-    // {song_uri: "", song_id: ""} if the queue is empty.
+    // {song_uri: "", song_id: "", user_id: ""} if the queue is empty.
     .post('/dequeue', (req, res) => {
         var room_code = req.body.code;
 
@@ -220,7 +232,7 @@ express()
 
                 res.status(200);
                 if (result.queue.length == 0) {
-                    res.send({song_uri: "", song_id: ""});
+                    res.send({song_uri: "", song_id: "", user_id: ""});
                 } else {
                     var new_queue = result.queue;
                     var song = new_queue[0];

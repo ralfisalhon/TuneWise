@@ -16,6 +16,26 @@ const { width: windowWidth, height: windowHeight } = Dimensions.get("window");
 import { human, material } from "react-native-typography";
 import { SafeAreaView } from "react-navigation";
 
+// import Spotify from "rn-spotify-sdk";
+
+const spotifyOptions = {
+  clientID: "0aeb9b1df687428fabdbbd115673d64c",
+  redirectURL: "https://jamblr.herokuapp.com/",
+  tokenSwapURL: "https://jamblr.herokuapp.com/swap",
+  tokenRefreshURL: "https://jamblr.herokuapp.com/refresh",
+  scopes: [
+    // "user-read-private",
+    // "playlist-read",
+    "playlist-read-private",
+    // "user-library-modify",
+    // "user-library-read",
+    // "playlist-modify-public",
+    // "playlist-modify-private",
+    "user-top-read"
+    // "ugc-image-upload"
+  ]
+};
+
 export class MainScreen extends React.Component {
   static navigationOptions = {
     header: null
@@ -27,7 +47,38 @@ export class MainScreen extends React.Component {
     this.state = {};
   }
 
-  componentDidMount() {}
+  componentDidMount() {
+    // this.initializeSpotify();
+  }
+
+  initializeSpotify() {
+    let that = this;
+    if (!Spotify.isInitialized()) {
+      Spotify.initialize(spotifyOptions)
+        .then(loggedIn => {
+          that.setState({ spotifyInitialized: true });
+          Alert.alert("AHH");
+        })
+        .catch(error => {
+          Alert.alert("Error!", error.message);
+        });
+    }
+  }
+
+  connectWithSpotify(navigate) {
+    Spotify.login()
+      .then(loggedIn => {
+        if (loggedIn) {
+          const accessToken = Spotify.getSession().accessToken;
+          const refreshToken = Spotify.getSession().refreshToken;
+          // Save refreshToken to DefaultPreference
+          navigate("Home", { accessToken });
+        }
+      })
+      .catch(error => {
+        Alert.alert("Error!", error.message);
+      });
+  }
 
   isAtBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
     return layoutMeasurement.height + contentOffset.y >= contentSize.height;
@@ -52,6 +103,12 @@ export class MainScreen extends React.Component {
         {/* <View style={styles.card}></View> */}
         <TouchableOpacity onPress={() => navigate("Listen")}>
           <Text style={styles.text}>TuneWise</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={() => this.connectWithSpotify(navigate)}>
+          <Text style={styles.text}>Start Game as Host</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button}>
+          <Text style={styles.text}>Join Existing Game</Text>
         </TouchableOpacity>
       </SafeAreaView>
     );
@@ -97,5 +154,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     margin: 5,
     padding: 10
+  },
+  button: {
+    backgroundColor: "gray",
+    paddingHorizontal: 30,
+    paddingVertical: 15,
+    borderRadius: 20,
+    margin: 10
   }
 });

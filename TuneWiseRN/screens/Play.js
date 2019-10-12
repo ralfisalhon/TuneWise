@@ -124,7 +124,11 @@ export class PlayScreen extends React.Component {
       <SearchResult
         name={item.name}
         artist={item.artists[0].name}
-        imageURI={item.album.images ? item.album.images[2].url : "a"}
+        imageURI={
+          item.album.images && item.album.images.length > 2
+            ? item.album.images[2].url
+            : "https://placehold.it/64"
+        }
       ></SearchResult>
     );
   };

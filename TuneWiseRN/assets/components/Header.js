@@ -7,10 +7,20 @@ const { width: windowWidth } = Dimensions.get("window");
 import { LinedText } from "./LinedText.js";
 
 class Header extends Component {
-  static defaultProps = {};
+  static defaultProps = {
+    back: false
+  };
+
+  threeLinesPressed() {
+    alert("pressed 3 lines");
+  }
+
+  gearPressed() {
+    alert("pressed gear");
+  }
 
   render() {
-    const { title } = this.props;
+    const { title, back } = this.props;
 
     return (
       <View style={styles.header}>
@@ -21,7 +31,7 @@ class Header extends Component {
           <Image
             style={{ height: undefined, width: undefined, flex: 1 }}
             resizeMode={"contain"}
-            source={require("../images/3lines.png")}
+            source={back ? require("../images/backArrow.png") : require("../images/gear.png")}
           />
         </TouchableOpacity>
         <LinedText text={title}></LinedText>

@@ -182,7 +182,7 @@ express()
                         time_created: Date.now(), 
                         queue: [],
                         users: [],
-                        round: {winner_id: "", guesses: []}};
+                        round: {winner_id: "", is_won: "false", guesses: []}};
                 collection.insertOne(room, (error, result) => {
                     res.status(200);
                     res.send({code: room_code, time_created: room.time_created});
@@ -256,6 +256,7 @@ express()
 
                     // Reset the round.
                     var new_round = result.round;
+                    new_round.is_won = "false";
                     new_round.guesses = [];
                     collection.updateOne({code: room_code}, 
                                          {code: room_code, 
@@ -273,19 +274,104 @@ express()
     })
 
     // Submit a guess for a song.
-    // .post('/guess', (req, res) => {
-    //     var room_code = req.body.code;
-    //     var user_id   = req.body.user_id;
-    //     var guess_id  = req.body.guess_id;
+    // NOTE - At end of the song, everyone should call /getwinner to get the
+    // winner.
+    .post('/guess', (req, res) => {
+        var room_code = req.body.code;
+        var user_id   = req.body.user_id;
+        var guess_id  = req.body.guess_id;
 
-    //     if (room_code == null || user_id == null || guess_id == null) {
-    //         res.status(400);
-    //         res.send("Error: no room code, user ID, or guessed song ID supplied.");
-    //         return;
-    //     }
+        if (room_code == null || user_id == null || guess_id == null) {
+            res.status(400);
+            res.send("Error: no room code, user ID, or guessed song ID supplied.");
+            return;
+        }
 
-    //     db.collection('rooms')
-    // })
+        db.collection('rooms', (error, collection) => {
+            collection.findOne({code: room_code}, (error, result) => {
+                if (!result) {
+                    res.status(400);
+                    res.send("Error: invalid room code.");
+                    return;
+                }
+                collection.findOne({'users.user_id': user_id}, (error, u_result) => {
+                    if (!u_result) {
+                        res.status(400);
+                        res.send("Error: invalid user ID.");
+                        return;
+                    }
+                    var this_round = result.round;
+                    var answer_id  = result.queue[result.queue.length - 1].song_id;
+                    var my_guesses = 0;
+                    var my_index;
+                    var new_round;
+                    for (my_index = 0; my_index < result.round.guesses.length; my_index++) {
+                        if (user_id == result.round.guesses[my_index].user_id) {
+                            my_guesses = result.round.guesses[my_index].num_guesses;
+                        }
+                    }
+
+                    // Case 1: Someone has guessed it right
+                    if (this_round.is_won == "true") {
+                        res.status(200);
+                        res.send({guessed: "false", correct: "false", someone_won: "true", winner_id: this_round.winner_id});
+                        return;
+                    }
+                    // Case 2: I'm out of guesses
+                    else if (my_guesses >= 3) {
+                        res.status(200);
+                        res.send({guessed: "false", correct: "false", someone_won: "false"});
+                        return;
+                    }
+                    // Case 3: I have more guesses, but I'm wrong
+                    else if (guess_id != answer_id) {
+                        new_round = result.round;
+                        for (my_index = 0; my_index < result.round.guesses.length; my_index++) {
+                            if (user_id == result.round.guesses[my_index].user_id) {
+                                break;
+                            }
+                        }
+                        if (my_guesses == 0) {
+                            new_round.guesses.push({user_id: user_id, num_guesses: 1});
+                        } else {
+                            my_guesses++;
+                            new_round.guesses[my_index].num_guesses = my_guesses;
+                        }
+
+                        collection.updateOne({code: room_code},
+                                             {code: room_code,
+                                              time_created: result.time_created,
+                                              queue: result.queue,
+                                              users: result.users,
+                                              round: new_round},
+                                             (error, up_result) => {
+                            res.status(200);
+                            res.send({guessed: "true", correct: "false", someone_won: "false"});
+                            return;
+                        });
+                    }
+                    // Case 4: I have more guesses, and I'm right
+                    else {
+                        new_round = result.round;
+                        new_round.is_won = "true";
+                        new_round.winner_id = user_id;
+                        new_round.guesses = [];
+
+                        collection.updateOne({code: room_code},
+                                             {code: room_code,
+                                              time_created: result.time_created,
+                                              queue: result.queue,
+                                              users: result.users,
+                                              round: new_round},
+                                             (error, up_result) => {
+                            res.status(200);
+                            res.send({guessed: "true", correct: "true", someone_won: "true"});
+                        });
+                    }
+                });                
+            });
+        });
+    })
 
     // Push a song into the room's song list.
     // Look into using POST /startround instead to push a song AND start the

@@ -318,6 +318,11 @@ express()
                         return;
                     }
                     var this_round = result.round;
+                    if (result.queue.length == 0) {
+                    	res.status(400);
+                    	res.send("Error: no songs to play.");
+                    	return;
+                    }
                     var answer_id  = result.queue[result.queue.length - 1].song_id;
                     var my_guesses = 0;
                     var my_index;

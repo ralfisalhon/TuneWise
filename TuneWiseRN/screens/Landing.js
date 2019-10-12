@@ -39,7 +39,7 @@ const spotifyOptions = {
   ]
 };
 
-export class MainScreen extends React.Component {
+export class LandingScreen extends React.Component {
   static navigationOptions = {
     header: null
   };
@@ -72,7 +72,8 @@ export class MainScreen extends React.Component {
 
   connectWithSpotify(navigate) {
     if (this.state.accessToken) {
-      navigate("SongPick", this.state.accessToken);
+      navigate("NameSession", { accessToken: this.state.accessToken });
+      return;
     }
     Spotify.login()
       .then(loggedIn => {
@@ -82,7 +83,7 @@ export class MainScreen extends React.Component {
           // Save refreshToken to DefaultPreference
           // Alert.alert(accessToken, refreshToken);
           this.setState({ accessToken, refreshToken });
-          navigate("SongPick", { accessToken });
+          navigate("NameSession", { accessToken });
         }
       })
       .catch(error => {
@@ -93,15 +94,6 @@ export class MainScreen extends React.Component {
   isAtBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
     return layoutMeasurement.height + contentOffset.y >= contentSize.height;
   };
-
-  threeLinesPressed() {
-    alert("pressed 3 lines");
-  }
-
-  gearPressed() {
-    // alert("pressed 3 lines");
-    this.props.navigation.navigate("Settings");
-  }
 
   render() {
     const { navigate } = this.props.navigation;

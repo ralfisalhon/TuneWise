@@ -17,6 +17,8 @@ import {
 const { width: windowWidth, height: windowHeight } = Dimensions.get("window");
 import { human } from "react-native-typography";
 
+import { Header } from "../assets/components/Header";
+
 export class SettingsScreen extends React.Component {
   static navigationOptions = {
     header: null
@@ -35,21 +37,24 @@ export class SettingsScreen extends React.Component {
   componentDidMount() {}
 
   render() {
-    const {} = this.props.navigation;
+    const { navigate } = this.props.navigation;
 
     return (
       <SafeAreaView style={styles.container}>
-        <View style={styles.header}>
-          <View>
-            <Text style={styles.text}>--- settings ---</Text>
-          </View>
-        </View>
+        <Header
+          title={"settings"}
+          navigate={navigate}
+          navigation={this.props.navigation}
+          back={true}
+          hideSettings={true}
+        ></Header>
 
         <View style={styles.container}>
           <View style={styles.menu}>
             <View style={styles.menuItem}>
               <Text style={styles.buttonText}> 30-Second Mode</Text>
               <Switch
+                ios_backgroundColor={"gray"}
                 style={styles.test}
                 onValueChange={value => this.buttonFunc(value)}
                 value={this.state.value}
@@ -106,7 +111,8 @@ const styles = StyleSheet.create({
     color: "white",
     borderRadius: 10,
     margin: 15,
-    borderWidth: 4,
+    borderWidth: 2,
+    paddingLeft: 10,
     borderColor: "white",
     height: 50,
     alignItems: "center",
@@ -115,7 +121,8 @@ const styles = StyleSheet.create({
   menuItem: {
     width: windowWidth - 30,
     height: 50,
-    borderWidth: 4,
+    borderWidth: 2,
+    paddingLeft: 10,
     borderColor: "white",
     justifyContent: "space-between",
     flexDirection: "row",

@@ -57,7 +57,7 @@ export class NameSessionScreen extends React.Component {
           navigation={this.props.navigation}
           back={true}
         ></Header>
-        <View style={{ flex: 1, justifyContent: "center" }}>
+        <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
           <View style={styles.logo}>
             <Image
               style={{ height: undefined, width: undefined, flex: 1 }}
@@ -67,12 +67,19 @@ export class NameSessionScreen extends React.Component {
           </View>
           <View style={styles.input}>
             <TextInput
-              placeholder={"name"}
+              placeholder={"session name"}
               value={this.state.sessionName}
-              style={{ flex: 1, color: "white", fontFamily: "Courier" }}
+              style={{
+                flex: 1,
+                color: "white",
+                fontFamily: "Courier",
+                fontSize: 24
+              }}
               autoCapitalize={"none"}
               autoCompleteType={"off"}
               autoCorrect={false}
+              maxLength={20}
+              placeholderTextColor={"gray"}
               onChangeText={text => this.updateSessionName(text)}
             />
           </View>
@@ -82,7 +89,7 @@ export class NameSessionScreen extends React.Component {
               style={[styles.button, styles.startGame]}
               onPress={() => navigate("CodeScreen", { accessToken })}
             >
-              <Text style={styles.text}>join existing.</Text>
+              <Text style={styles.text}>start game.</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -103,12 +110,14 @@ const styles = StyleSheet.create({
     borderRadius: 20
   },
   input: {
-    marginVertical: 25,
+    marginTop: 50,
+    marginBottom: 25,
     borderWidth: 2,
     borderRadius: 25,
     borderColor: "white",
     paddingHorizontal: 20,
-    height: 50
+    height: 70,
+    width: windowWidth * 0.8
   },
   button: {
     backgroundColor: "gray",
@@ -119,5 +128,10 @@ const styles = StyleSheet.create({
   },
   startGame: {
     backgroundColor: "white"
+  },
+  text: {
+    color: "#010d58",
+    fontFamily: "Courier",
+    fontSize: 22
   }
 });

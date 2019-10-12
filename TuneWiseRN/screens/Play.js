@@ -32,13 +32,17 @@ export class PlayScreen extends React.Component {
     this.state = {};
   }
 
+  addSong() {
+    alert("add song pressed");
+  }
+
   componentDidMount() {}
 
   renderDrawer = () => {
     return (
       <View style={styles.contentContainer}>
         <View style={{ position: "absolute", top: -54, right: 5, zIndex: 2 }}>
-          <TouchableOpacity activeOpacity={0.5} onPress={() => alert("HEY")}>
+          <TouchableOpacity activeOpacity={0.5} onPress={() => this.addSong()}>
             <Image
               style={{ height: 96, width: 96, marginHorizontal: 8, marginTop: 12 }}
               resizeMode={"stretch"}
@@ -51,6 +55,24 @@ export class PlayScreen extends React.Component {
           resizeMode={"stretch"}
           source={require("../assets/images/lineGray.png")}
         />
+        <View
+          style={{
+            marginTop: 12,
+            width: windowWidth * 0.88,
+            flexDirection: "row",
+            alignItems: "center"
+          }}
+        >
+          <Image
+            style={{ height: 72, width: 72 }}
+            resizeMode={"stretch"}
+            source={require("../assets/images/song0.png")}
+          />
+          <View style={{ marginHorizontal: 15 }}>
+            <Text style={styles.songTitle}>obscure song 0</Text>
+            <Text style={styles.songArtist}>by ashton & the ophids</Text>
+          </View>
+        </View>
       </View>
     );
   };
@@ -69,8 +91,8 @@ export class PlayScreen extends React.Component {
         ></Header>
         <BottomDrawer
           startUp={false}
-          containerHeight={windowHeight * 0.5}
-          downDisplay={windowHeight * 0.32}
+          containerHeight={windowHeight * 0.7}
+          downDisplay={windowHeight * 0.5}
         >
           {this.renderDrawer()}
         </BottomDrawer>
@@ -94,5 +116,14 @@ const styles = StyleSheet.create({
   },
   text: {
     paddingHorizontal: 5
+  },
+  songTitle: {
+    fontFamily: "Courier",
+    fontSize: 24
+  },
+  songArtist: {
+    fontFamily: "Courier New",
+    fontWeight: "200",
+    fontSize: 14
   }
 });

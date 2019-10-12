@@ -118,12 +118,12 @@ export class LandingScreen extends React.Component {
             >
               <Text style={[styles.text, styles.gameAsHostText]}>create session.</Text>
             </TouchableOpacity>
-            <View style={{ marginVertical: 20 }}>
+            <View style={{ marginVertical: 10 }}>
               <LinedText text={"or"}></LinedText>
             </View>
             <TouchableOpacity
               style={[styles.button, styles.joinExisting]}
-              onPress={() => navigate("CodeScreen", { accessToken })}
+              onPress={() => navigate("EnterCode")}
             >
               <Text style={styles.text}>join existing.</Text>
             </TouchableOpacity>

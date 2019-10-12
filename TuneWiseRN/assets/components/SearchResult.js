@@ -7,12 +7,20 @@ const { width: windowWidth } = Dimensions.get("window");
 class SearchResult extends Component {
   static defaultProps = {};
 
+  handleSongClick(callback, name, artist, imageURI) {
+    if (globalAdding) {
+      callback(name, artist, imageURI);
+    } else {
+      alert("in guessing state");
+    }
+  }
+
   render() {
-    const { name, artist, imageURI } = this.props;
+    const { name, artist, imageURI, callback } = this.props;
 
     return (
       <TouchableOpacity
-        onPress={() => alert(name)}
+        onPress={() => this.handleSongClick(callback, name, artist, imageURI)}
         style={{ flexDirection: "row", marginVertical: 5, width: windowWidth * 0.75 }}
       >
         <Image

@@ -23,57 +23,46 @@ import { Song } from "../assets/components/Song";
 import { SearchResult } from "../assets/components/SearchResult";
 
 const token =
-  "BQDRxOEeLW4PV2g1Ahd7RdxtcgzhVfzgzZjBLm2SasIEIaE_A9Z-QpXuAwUx8RWVPapp1UpsHWSKtkk_Jy4eDJUXbvAninuG5hkHJ5yhfsKT4xYpPRQEeJFmbMfbChteH1Ovri4YtgcvXR_Q6J0P_j89VygLVrYbHx2VozT4kfI3Pyl0hAkBBrk5l2dZoU5Ok6Oj5wl3hQHPTDhunRq3ubPXau8MiZ23cZFyOxOGdMy6kaM21IkZoZx5A0pp3BHE3wXxDBEt8NY-zlWVFW9lWfHq6cIX9BsyVYST6YY";
+  "BQCnSMAuXZDBdLahSJxcYwYJvRp-ai2GT8maGJNZUU2j9G24EO-MG1IHO73Ndf9HfaY0-_4OOmU64UT0_oI3P-jjLHNxVy1zVELFqndJUkJl2DXWoXKKWUFxOViOdsJUmqD0xLIiZ2N-I9OqoNcgB4tm6aXWL4EtpWSrHg89A1OfXP8clz-OYKxa5_yKXPJUF8aMeOa1ZCuK6mg2WQApp1fQwYdALTQFLBspaQSeFQXeY-CeIluueO9A8nKSuPcHv7CBR1kPk0dGjtIpGSeofdVWvCATaTfJ55_rtf4";
 
 const HEADER_HEIGHT = 100;
 
+// {
+//   title: "obscure song 0",
+//   artist: "ashton & the ophids",
+//   imageURI: "https://puu.sh/ErI6Z/c5d481e732.png"
+// }
+
 export class PlayScreen extends React.Component {
   static navigationOptions = {
-    header: null
+    header: null,
+    gesturesEnabled: false
   };
 
   constructor() {
     super();
 
     this.state = {
+      topText: "guess the song",
       refresh: false,
       searchResults: [],
-      songs: [
-        {
-          title: "obscure song 0",
-          artist: "ashton & the ophids",
-          imageURI: "https://puu.sh/ErI6Z/c5d481e732.png"
-        },
-        {
-          title: "obscure song 1",
-          artist: "ashton & the ophids",
-          imageURI: "https://puu.sh/ErIey/7a23d6457a.png"
-        },
-        {
-          title: "obscure song 2",
-          artist: "ashton & the ophids",
-          imageURI: "https://puu.sh/ErI6Z/c5d481e732.png"
-        },
-        {
-          title: "obscure song 3",
-          artist: "ashton & the ophids",
-          imageURI: "https://puu.sh/ErIey/7a23d6457a.png"
-        },
-        {
-          title: "obscure song 4",
-          artist: "ashton & the ophids",
-          imageURI: "https://puu.sh/ErI6Z/c5d481e732.png"
-        },
-        {
-          title: "obscure song 5",
-          artist: "ashton & the ophids",
-          imageURI: "https://puu.sh/ErIey/7a23d6457a.png"
-        }
-      ]
+      songs: [],
+      searchQuery: ""
     };
   }
 
+  searchSongCheck(accessToken, query) {
+    let that = this;
+    this.setState({ searchQuery: query });
+    setTimeout(function() {
+      if (that.state.searchQuery == query) {
+        that.searchSong(accessToken, query);
+      }
+    }, 250);
+  }
+
   searchSong = async (accessToken, query) => {
+    if (query.length == 0) this.setState({ searchResults: [] });
     if (query.length < 3) return;
     query = query.split(" ").join("+");
     let xhr = new XMLHttpRequest();
@@ -86,7 +75,7 @@ export class PlayScreen extends React.Component {
         console.log("RALFIII");
         console.log(obj.tracks.items);
       } else if (xhr.status == 401) {
-        this.refreshToken();
+        alert("Your token expired");
       } else console.warn("Something went wrong on searchSong");
     };
     xhr.open("GET", "https://api.spotify.com/v1/search?type=track&limit=10&q=" + query);
@@ -96,13 +85,9 @@ export class PlayScreen extends React.Component {
     xhr.send();
   };
 
-  // searchSong(accessToken, query) {
-  //   alert(query);
-  // }
-
   addSong() {
-    alert("unimplemented");
-    this.setState({ refresh: !this.state.refresh });
+    this.setState({ topText: "add a song" });
+    globalAdding = true;
   }
 
   componentDidMount() {}
@@ -111,12 +96,36 @@ export class PlayScreen extends React.Component {
     return <Song title={item.title} artist={item.artist} imageURI={item.imageURI} />;
   };
 
+  addToYourQueue(name, artist, imageURI) {
+    let songs = this.state.songs;
+    songs.push({
+      title: name,
+      artist: artist,
+      imageURI: imageURI
+    });
+    console.log(songs);
+    this.setState({ songs }, () =>
+      this.setState({
+        refresh: !this.state.refresh,
+        topText: "guess the song",
+        searchQuery: "",
+        searchResults: []
+      })
+    );
+    globalAdding = false;
+  }
+
   renderSearchResults = ({ item, index }) => {
     return (
       <SearchResult
         name={item.name}
         artist={item.artists[0].name}
-        imageURI={item.album.images[2].url}
+        callback={(name, artist, image) => this.addToYourQueue(name, artist, image)}
+        imageURI={
+          item.album.images && item.album.images.length > 2
+            ? item.album.images[2].url
+            : "https://placehold.it/64"
+        }
       ></SearchResult>
     );
   };
@@ -138,30 +147,46 @@ export class PlayScreen extends React.Component {
           resizeMode={"stretch"}
           source={require("../assets/images/lineGray.png")}
         />
-        <FlatList
-          extraData={this.state.refresh}
-          ref={ref => {
-            this.flatListRef3 = ref;
-          }}
-          showsVerticalScrollIndicator={false}
-          data={this.state.songs}
-          renderItem={this.renderPlaylist}
-          keyExtractor={(item, index) => index.toString()}
-        />
+        {this.state.songs && this.state.songs.length > 0 ? (
+          <FlatList
+            scrollEnabled={false}
+            extraData={this.state.refresh}
+            ref={ref => {
+              this.flatListRef3 = ref;
+            }}
+            showsVerticalScrollIndicator={false}
+            data={this.state.songs}
+            renderItem={this.renderPlaylist}
+            keyExtractor={(item, index) => index.toString()}
+          />
+        ) : (
+          <View style={{ paddingHorizontal: 20, justifyContent: "space-between", flex: 1 }}>
+            <View style={{ height: 100, justifyContent: "center" }}>
+              <Text style={[styles.text, { color: "#010d58", fontSize: 16 }]}>
+                Queue songs by pressing the + button
+              </Text>
+            </View>
+            <View style={{ height: 100, justifyContent: "center" }}>
+              <Text style={[styles.text, { color: "#010d58", fontSize: 12 }]}>
+                I already told you what to do {">.<"}
+              </Text>
+            </View>
+          </View>
+        )}
       </View>
     );
   };
 
   renderYourSong() {
     return (
-      <View>
+      <View style={{ justifyContent: "center", alignItems: "center" }}>
         <View style={{ marginBottom: 10 }}>
           <Text style={styles.text}>it's your song!</Text>
         </View>
         <Image
           style={{
-            height: windowWidth - 40,
-            width: windowWidth - 40,
+            height: windowWidth - 60,
+            width: windowWidth - 60,
             borderRadius: 25
           }}
           resizeMode={"contain"}
@@ -190,25 +215,30 @@ export class PlayScreen extends React.Component {
     );
   }
 
+  backToGuessing() {
+    globalAdding = false;
+    this.setState({ topText: "guess the song", searchResults: [], searchQuery: "" });
+  }
+
   renderGuess() {
     return (
       <View
         style={{
           flex: 1,
-          backgroundColor: "white",
+          backgroundColor: "#ecf0f1",
           borderRadius: 25,
           alignItems: "center",
           padding: 20
         }}
       >
-        <Text style={[styles.text, { color: "#010d58", fontSize: 20 }]}>Guess this song!</Text>
+        <Text style={[styles.text, { color: "#010d58", fontSize: 20 }]}>{this.state.topText}</Text>
         <View style={styles.input}>
           <TextInput
-            placeholder={"session name"}
-            value={this.state.sessionName}
+            placeholder={"search spotify"}
+            value={this.state.searchQuery}
             style={{
               flex: 1,
-              color: "white",
+              color: "#ecf0f1",
               fontFamily: "Courier",
               fontSize: 24
             }}
@@ -217,9 +247,17 @@ export class PlayScreen extends React.Component {
             autoCorrect={false}
             maxLength={20}
             placeholderTextColor={"#bdc3c7"}
-            onChangeText={text => this.searchSong(token, text)}
+            onChangeText={text => this.searchSongCheck(token, text)}
           />
         </View>
+        {this.state.topText == "add a song" ? (
+          <TouchableOpacity onPress={() => this.backToGuessing()} style={{ marginTop: 5 }}>
+            <Text style={[styles.text, { color: "black", fontSize: 14 }]}>
+              {"<<"} back to guessing {">>"}
+            </Text>
+          </TouchableOpacity>
+        ) : null}
+        <View style={{ height: 10 }}></View>
         <FlatList
           extraData={this.state.refresh}
           ref={ref => {
@@ -244,6 +282,7 @@ export class PlayScreen extends React.Component {
           title={sessionName}
           navigate={navigate}
           navigation={this.props.navigation}
+          playScreen={true}
           back={true}
         ></Header>
         <View style={{ flex: 0.85, justifyContent: "center", marginBottom: 96 }}>
@@ -287,7 +326,6 @@ const styles = StyleSheet.create({
   },
   input: {
     marginTop: 10,
-    marginBottom: 25,
     borderWidth: 2,
     borderRadius: 25,
     borderColor: "white",

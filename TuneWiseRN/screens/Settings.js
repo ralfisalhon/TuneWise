@@ -52,7 +52,7 @@ export class SettingsScreen extends React.Component {
         <View style={styles.container}>
           <View style={styles.menu}>
             <View style={styles.menuItem}>
-              <Text style={styles.buttonText}> 30-Second Mode</Text>
+              <Text style={styles.text}> 30 second mode</Text>
               <Switch
                 ios_backgroundColor={"gray"}
                 style={styles.test}
@@ -61,21 +61,24 @@ export class SettingsScreen extends React.Component {
               />
             </View>
 
-            <TouchableOpacity style={styles.butt} onPress={() => Alert.alert("log out of spotify")}>
-              <Text style={styles.buttonText}>Logout of Spotify</Text>
+            <TouchableOpacity
+              style={[styles.menuItem, { justifyContent: "center" }]}
+              onPress={() => Alert.alert("log out of spotify")}
+            >
+              <Text style={styles.text}>log out of spotify</Text>
             </TouchableOpacity>
 
             <View style={styles.credits}>
-              <Text style={styles.creditText}>
+              <Text style={styles.text}>
                 {"\n"}
-                Credits:
+                credits:
                 {"\n"}
               </Text>
               <Text style={styles.text}>
-                Ralfi Salhon -- Front End{"\n"}
-                Mohsin Rizvi -- Back End{"\n"}
-                Nihal Pai -- UI/UX {"\n"}
-                San Akdag -- PM{"\n"}
+                ralfi salhon -- front end{"\n"}
+                mohsin rizvi -- back end{"\n"}
+                nihal pai -- ui/ux {"\n"}
+                san akdag -- pm{"\n"}
               </Text>
             </View>
           </View>
@@ -107,21 +110,10 @@ const styles = StyleSheet.create({
     margin: 10,
     paddingVertical: 5
   },
-  butt: {
-    color: "white",
-    borderRadius: 10,
-    margin: 15,
-    borderWidth: 2,
-    paddingLeft: 10,
-    borderColor: "white",
-    height: 50,
-    alignItems: "center",
-    justifyContent: "center"
-  },
   menuItem: {
     width: windowWidth - 30,
     height: 50,
-    borderWidth: 2,
+    borderWidth: 1,
     paddingLeft: 10,
     borderColor: "white",
     justifyContent: "space-between",
@@ -141,16 +133,9 @@ const styles = StyleSheet.create({
     marginTop: 5,
     color: "white"
   },
-  creditText: {
-    color: "white",
-    fontSize: 20
-  },
-  buttonText: {
-    fontSize: 20,
-    color: "white"
-  },
   text: {
     color: "white",
-    fontSize: 20
+    fontSize: 20,
+    fontFamily: "Courier New"
   }
 });

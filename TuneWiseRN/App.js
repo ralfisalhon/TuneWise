@@ -9,6 +9,7 @@ var { InfoScreen } = require("./screens/Info.js");
 global.globalAdding = false;
 global.globalRoomCode = null;
 global.globalUserID = null;
+global.globalSongPlaying = null;
 
 const MainNavigator = createStackNavigator({
   Landing: { screen: LandingScreen },

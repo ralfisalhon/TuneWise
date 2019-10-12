@@ -244,6 +244,7 @@ export class PlayScreen extends React.Component {
           title={sessionName}
           navigate={navigate}
           navigation={this.props.navigation}
+          playScreen={true}
           back={true}
         ></Header>
         <View style={{ flex: 0.85, justifyContent: "center", marginBottom: 96 }}>

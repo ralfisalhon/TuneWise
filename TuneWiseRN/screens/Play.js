@@ -41,7 +41,9 @@ export class PlayScreen extends React.Component {
       refresh: false,
       searchResults: [],
       songs: [],
-      searchQuery: ""
+      searchQuery: "",
+      host: false,
+      hostDecided: false
     };
   }
 
@@ -82,6 +84,10 @@ export class PlayScreen extends React.Component {
   addSong() {
     this.setState({ topText: "add a song" });
     globalAdding = true;
+
+    if (this.state.host && this.state.firstSong) {
+      this.startRound();
+    }
   }
 
   componentDidMount() {}
@@ -266,9 +272,19 @@ export class PlayScreen extends React.Component {
     );
   }
 
+  setHost() {
+    let that = this;
+    setTimeout(function() {
+      that.setState({ host: true, hostDecided: true });
+    }, 250);
+  }
+
   render() {
     const { navigate } = this.props.navigation;
-    const { accessToken, sessionName } = this.props.navigation.state.params;
+    const { accessToken, sessionName, host } = this.props.navigation.state.params;
+    const { hostDecided } = this.state;
+
+    if (host && !hostDecided) this.setHost();
 
     return (
       <SafeAreaView style={styles.container}>
@@ -279,6 +295,11 @@ export class PlayScreen extends React.Component {
           playScreen={true}
           back={true}
         ></Header>
+        {host ? (
+          <Text style={[styles.text, { marginTop: -10, fontSize: 12, color: "yellow" }]}>
+            HOST MODE
+          </Text>
+        ) : null}
         <View style={{ flex: 0.85, justifyContent: "center", marginBottom: 96 }}>
           <View style={styles.card}>{false ? this.renderYourSong() : this.renderGuess()}</View>
         </View>

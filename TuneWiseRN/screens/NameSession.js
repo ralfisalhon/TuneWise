@@ -60,7 +60,7 @@ export class NameSessionScreen extends React.Component {
     var xhr = new XMLHttpRequest();
 
     xhr.onreadystatechange = e => {
-      console.warn(xhr.readyState);
+      // console.warn(xhr.readyState);
       if (xhr.readyState !== 4) {
         return;
       }
@@ -68,7 +68,11 @@ export class NameSessionScreen extends React.Component {
         var data = xhr.responseText;
         var obj = JSON.parse(data.replace(/\r?\n|\r/g, ""));
         // console.warn(obj);
-        navigate("Play", { accessToken: accessToken, sessionName: this.state.sessionName });
+        navigate("Play", {
+          accessToken: accessToken,
+          sessionName: this.state.sessionName,
+          host: true
+        });
       } else {
         // console.warn(xhr.responseText, xhr.status);
       }

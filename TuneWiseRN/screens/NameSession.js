@@ -11,7 +11,10 @@ import {
   ScrollView,
   Platform,
   Alert,
-  TextInput
+  TextInput,
+  KeyboardAvoidingView,
+  TouchableWithoutFeedback,
+  Keyboard
 } from "react-native";
 const { width: windowWidth, height: windowHeight } = Dimensions.get("window");
 import { human } from "react-native-typography";
@@ -45,8 +48,17 @@ export class NameSessionScreen extends React.Component {
     this.setState({ sessionName });
   }
 
+  checkInput(navigate, accessToken) {
+    const { sessionName } = this.state;
+    if (sessionName) {
+      navigate("Play", { accessToken, sessionName });
+    } else {
+      Alert.alert("pls name ur session");
+    }
+  }
+
   render() {
-    const { accessToken } = this.state;
+    const { accessToken, sessionName } = this.state;
     const { navigate } = this.props.navigation;
 
     return (
@@ -56,43 +68,48 @@ export class NameSessionScreen extends React.Component {
           navigate={navigate}
           navigation={this.props.navigation}
           back={true}
-        ></Header>
-        <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-          <View style={styles.logo}>
-            <Image
-              style={{ height: undefined, width: undefined, flex: 1 }}
-              resizeMode={"contain"}
-              source={require("../assets/images/logo.png")}
-            />
-          </View>
-          <View style={styles.input}>
-            <TextInput
-              placeholder={"session name"}
-              value={this.state.sessionName}
-              style={{
-                flex: 1,
-                color: "white",
-                fontFamily: "Courier",
-                fontSize: 24
-              }}
-              autoCapitalize={"none"}
-              autoCompleteType={"off"}
-              autoCorrect={false}
-              maxLength={20}
-              placeholderTextColor={"gray"}
-              onChangeText={text => this.updateSessionName(text)}
-            />
-          </View>
-
-          <View>
-            <TouchableOpacity
-              style={[styles.button, styles.startGame]}
-              onPress={() => navigate("CodeScreen", { accessToken })}
-            >
-              <Text style={styles.text}>start game.</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
+        />
+        <KeyboardAvoidingView
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+          behavior="padding"
+          enabled
+        >
+          <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+            <View style={{ justifyContent: "center", alignItems: "center" }}>
+              <View style={styles.logo}>
+                <Image
+                  style={{ height: undefined, width: undefined, flex: 1 }}
+                  resizeMode={"contain"}
+                  source={require("../assets/images/logo.png")}
+                />
+              </View>
+              <View style={styles.input}>
+                <TextInput
+                  placeholder={"session name"}
+                  value={this.state.sessionName}
+                  style={{
+                    flex: 1,
+                    color: "white",
+                    fontFamily: "Courier",
+                    fontSize: 24
+                  }}
+                  autoCapitalize={"none"}
+                  autoCompleteType={"off"}
+                  autoCorrect={false}
+                  maxLength={20}
+                  placeholderTextColor={"#95a5a6"}
+                  onChangeText={text => this.updateSessionName(text)}
+                />
+              </View>
+              <TouchableOpacity
+                style={[styles.button, styles.startGame]}
+                onPress={() => this.checkInput(navigate, accessToken)}
+              >
+                <Text style={styles.text}>start game.</Text>
+              </TouchableOpacity>
+            </View>
+          </TouchableWithoutFeedback>
+        </KeyboardAvoidingView>
       </SafeAreaView>
     );
   }
@@ -105,26 +122,25 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   logo: {
-    height: windowHeight / 3,
+    height: windowHeight / 3.5,
     width: windowWidth - 40,
     borderRadius: 20
   },
   input: {
-    marginTop: 50,
+    marginTop: 40,
     marginBottom: 25,
     borderWidth: 2,
     borderRadius: 25,
     borderColor: "white",
     paddingHorizontal: 20,
-    height: 70,
+    height: 60,
     width: windowWidth * 0.8
   },
   button: {
     backgroundColor: "gray",
     paddingHorizontal: 25,
     paddingVertical: 15,
-    borderRadius: 20,
-    margin: 10
+    borderRadius: 20
   },
   startGame: {
     backgroundColor: "white"

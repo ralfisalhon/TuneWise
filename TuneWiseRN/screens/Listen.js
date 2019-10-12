@@ -15,7 +15,7 @@ import {
 const { width: windowWidth, height: windowHeight } = Dimensions.get("window");
 import { human } from "react-native-typography";
 
-export class HomeScreen extends React.Component {
+export class ListenScreen extends React.Component {
   static navigationOptions = {
     header: null
   };

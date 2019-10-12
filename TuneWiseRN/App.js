@@ -1,10 +1,10 @@
 import { createStackNavigator, createAppContainer } from "react-navigation";
-var { LoginScreen } = require("./screens/LoginScreen.js");
-var { HomeScreen } = require("./screens/HomeScreen.js");
+var { MainScreen } = require("./screens/MainScreen.js");
+var { ListenScreen } = require("./screens/Listen.js");
 
 const MainNavigator = createStackNavigator({
-  Home: { screen: LoginScreen },
-  Profile: { screen: HomeScreen }
+  Home: { screen: MainScreen },
+  Listen: { screen: ListenScreen }
 });
 
 const App = createAppContainer(MainNavigator);

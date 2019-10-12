@@ -27,11 +27,12 @@ express()
 
     // Get the queued songs
     .get('/getqueue', (req, res) => {
-        if (req.query.code === null) {
+        var room_code = req.query.code;
+
+        if (room_code == null) {
             res.status(400);
             res.send("Error: no room code supplied.");
         }
-        var room_code = req.query.code;
 
         db.collection('rooms', (error, collection) => {
             collection.findOne({code: room_code}, (error, result) => {
@@ -71,6 +72,37 @@ express()
                 collection.insertOne(room, (error, result) => {
                     res.status(200);
                     res.send({code: room_code, time_created: room.time_created});
+                });
+            });
+        });
+    })
+
+    .post('/queuesong', (req, res) => {
+        var room_code = req.body.code;
+        var song_uri = req.body.song_uri;
+
+        if (room_code == null || song_uri == null) {
+            res.status(400);
+            res.send("Error: no room code or song URI supplied.");
+        }
+
+        db.collection('rooms', (error, collection) => {
+            collection.findOne({code: room_code}, (error, result) => {
+                if (!result) {
+                    res.status(400);
+                    res.send("Error: invalid room code.");
+                    return;
+                }
+
+                var new_queue = result.queue;
+                new_queue.push(song_uri);
+                collection.updateOne({code: room_code}, 
+                                     {code: room_code, 
+                                      time_created: result.time_created, 
+                                      queue: new_queue}, 
+                                     (error, collection) => {
+                    res.status(200);
+                    res.send();
                 });
             });
         });

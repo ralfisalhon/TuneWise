@@ -141,9 +141,8 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   logo: {
-    height: windowHeight / 2.75,
-    width: windowWidth - 40,
-    borderRadius: 20
+    height: windowHeight / 2.5,
+    width: windowWidth - 40
   },
   text: {
     color: "white",
@@ -162,8 +161,8 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: "gray",
     paddingHorizontal: 25,
-    paddingVertical: 12,
-    borderRadius: 20,
+    paddingVertical: 18,
+    borderRadius: 100,
     margin: 10
   },
   gameAsHost: {
@@ -178,7 +177,7 @@ const styles = StyleSheet.create({
     borderColor: "white"
   },
   buttons: {
-    marginTop: 60,
+    marginTop: 30,
     alignItems: "center"
   }
 });

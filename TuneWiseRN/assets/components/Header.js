@@ -27,12 +27,12 @@ class Header extends Component {
       <View style={styles.header}>
         <TouchableOpacity
           style={{ width: 24, height: 24 }}
-          onPress={() => this.backButton(navigation)}
+          onPress={back ? () => this.backButton(navigation) : null}
         >
           <Image
             style={{ height: undefined, width: undefined, flex: 1 }}
             resizeMode={"contain"}
-            source={back ? require("../images/backArrow.png") : require("../images/3lines.png")}
+            source={back ? require("../images/backArrow.png") : require("../images/info.png")}
           />
         </TouchableOpacity>
         <LinedText text={title}></LinedText>

@@ -13,13 +13,13 @@ class LinedText extends Component {
     return (
       <View style={{ flexDirection: "row", alignItems: "center" }}>
         <Image
-          style={{ height: 2, width: 32, marginHorizontal: 8 }}
+          style={{ height: 2, width: 36, marginHorizontal: 8 }}
           resizeMode={"stretch"}
           source={require("../images/line.png")}
         />
         <Text style={styles.text}>{text}</Text>
         <Image
-          style={{ height: 2, width: 32, marginHorizontal: 8 }}
+          style={{ height: 2, width: 36, marginHorizontal: 8 }}
           resizeMode={"stretch"}
           source={require("../images/line.png")}
         />

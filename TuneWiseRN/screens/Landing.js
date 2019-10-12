@@ -141,8 +141,8 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   logo: {
-    height: windowHeight / 2.5,
-    width: windowWidth - 40
+    height: windowWidth - 75,
+    width: windowWidth - 75
   },
   text: {
     color: "white",

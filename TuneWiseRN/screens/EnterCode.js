@@ -63,7 +63,7 @@ export class EnterCodeScreen extends React.Component {
       return;
     }
 
-    console.warn("let's check! you entered: " + this.state.sessionCode);
+    // console.warn("let's check! you entered: " + this.state.sessionCode);
 
     this.joinRoom(sessionCode, "Ralfi", navigate);
   }

@@ -58,19 +58,19 @@ export class PlayScreen extends React.Component {
     var xhr = new XMLHttpRequest();
 
     xhr.onreadystatechange = e => {
-      console.warn(xhr.readyState);
+      // console.warn(xhr.readyState);
       if (xhr.readyState !== 4) {
         return;
       }
       if (xhr.status == 200) {
         var data = xhr.responseText;
         // var obj = JSON.parse(data.replace(/\r?\n|\r/g, ""));
-        console.warn("Worked");
+        // console.warn("Worked");
         // console.warn(xhr.responseText);
         const sound = new Sound(song_uri, null, error => {
           if (error) {
             // do something
-            console.warn("Song does not have a preview url");
+            // console.warn("Song does not have a preview url");
           }
           // play when loaded
           sound.play();
@@ -128,6 +128,9 @@ export class PlayScreen extends React.Component {
   addSong() {
     this.setState({ topText: "add a song" });
     globalAdding = true;
+    if (!this.state.firstSong) {
+      this.setState({ firstSong: true });
+    }
   }
 
   componentDidMount() {}
@@ -144,6 +147,14 @@ export class PlayScreen extends React.Component {
       artist: artist,
       imageURI: imageURI
     });
+
+    if (this.state.host) {
+      globalSongPlaying = {
+        name,
+        artist,
+        imageURI
+      };
+    }
     // console.warn(this.state.host, this.state.firstSong);
     if (this.state.host && this.state.firstSong) {
       this.startRound(this.state.roomCode, item.preview_url, item.id, this.state.id);
@@ -170,7 +181,7 @@ export class PlayScreen extends React.Component {
         callback={(name, artist, image) => this.addToYourQueue(name, artist, image, item)}
         imageURI={
           item.album.images && item.album.images.length > 2
-            ? item.album.images[2].url
+            ? item.album.images[1].url
             : "https://placehold.it/64"
         }
       ></SearchResult>
@@ -225,6 +236,7 @@ export class PlayScreen extends React.Component {
   };
 
   renderYourSong() {
+    if (!globalSongPlaying) return null;
     return (
       <View style={{ justifyContent: "center", alignItems: "center" }}>
         <View style={{ marginBottom: 10 }}>
@@ -238,14 +250,14 @@ export class PlayScreen extends React.Component {
           }}
           resizeMode={"contain"}
           source={{
-            uri: "http://images.genius.com/5122fb08e82ccd1c941055fc5f6e1203.640x640x1.jpg"
+            uri: globalSongPlaying.imageURI
           }}
         />
         <View style={{ margin: 10 }}>
           <Text
             style={{ color: "white", fontFamily: "Courier", textAlign: "center", fontSize: 24 }}
           >
-            Wait for the Moment
+            {globalSongPlaying.name}
           </Text>
           <Text
             style={{
@@ -255,7 +267,7 @@ export class PlayScreen extends React.Component {
               fontSize: 18
             }}
           >
-            Vulfpeck
+            {globalSongPlaying.artist}
           </Text>
         </View>
       </View>

@@ -27,9 +27,16 @@ const token =
 
 const HEADER_HEIGHT = 100;
 
+// {
+//   title: "obscure song 0",
+//   artist: "ashton & the ophids",
+//   imageURI: "https://puu.sh/ErI6Z/c5d481e732.png"
+// }
+
 export class PlayScreen extends React.Component {
   static navigationOptions = {
-    header: null
+    header: null,
+    gesturesEnabled: false
   };
 
   constructor() {
@@ -39,38 +46,7 @@ export class PlayScreen extends React.Component {
       oldQuery: "",
       refresh: false,
       searchResults: [],
-      songs: [
-        {
-          title: "obscure song 0",
-          artist: "ashton & the ophids",
-          imageURI: "https://puu.sh/ErI6Z/c5d481e732.png"
-        },
-        {
-          title: "obscure song 1",
-          artist: "ashton & the ophids",
-          imageURI: "https://puu.sh/ErIey/7a23d6457a.png"
-        },
-        {
-          title: "obscure song 2",
-          artist: "ashton & the ophids",
-          imageURI: "https://puu.sh/ErI6Z/c5d481e732.png"
-        },
-        {
-          title: "obscure song 3",
-          artist: "ashton & the ophids",
-          imageURI: "https://puu.sh/ErIey/7a23d6457a.png"
-        },
-        {
-          title: "obscure song 4",
-          artist: "ashton & the ophids",
-          imageURI: "https://puu.sh/ErI6Z/c5d481e732.png"
-        },
-        {
-          title: "obscure song 5",
-          artist: "ashton & the ophids",
-          imageURI: "https://puu.sh/ErIey/7a23d6457a.png"
-        }
-      ]
+      songs: []
     };
   }
 
@@ -150,16 +126,31 @@ export class PlayScreen extends React.Component {
           resizeMode={"stretch"}
           source={require("../assets/images/lineGray.png")}
         />
-        <FlatList
-          extraData={this.state.refresh}
-          ref={ref => {
-            this.flatListRef3 = ref;
-          }}
-          showsVerticalScrollIndicator={false}
-          data={this.state.songs}
-          renderItem={this.renderPlaylist}
-          keyExtractor={(item, index) => index.toString()}
-        />
+        {this.state.songs && this.state.songs.length > 0 ? (
+          <FlatList
+            extraData={this.state.refresh}
+            ref={ref => {
+              this.flatListRef3 = ref;
+            }}
+            showsVerticalScrollIndicator={false}
+            data={this.state.songs}
+            renderItem={this.renderPlaylist}
+            keyExtractor={(item, index) => index.toString()}
+          />
+        ) : (
+          <View style={{ paddingHorizontal: 20, justifyContent: "space-between", flex: 1 }}>
+            <View style={{ height: 100, justifyContent: "center" }}>
+              <Text style={[styles.text, { color: "#010d58", fontSize: 16 }]}>
+                Queue songs by pressing the + button
+              </Text>
+            </View>
+            <View style={{ height: 100, justifyContent: "center" }}>
+              <Text style={[styles.text, { color: "#010d58", fontSize: 12 }]}>
+                I already told you what to do {">.<"}
+              </Text>
+            </View>
+          </View>
+        )}
       </View>
     );
   };
@@ -207,7 +198,7 @@ export class PlayScreen extends React.Component {
       <View
         style={{
           flex: 1,
-          backgroundColor: "white",
+          backgroundColor: "#ecf0f1",
           borderRadius: 25,
           alignItems: "center",
           padding: 20
@@ -220,7 +211,7 @@ export class PlayScreen extends React.Component {
             value={this.state.sessionName}
             style={{
               flex: 1,
-              color: "white",
+              color: "#ecf0f1",
               fontFamily: "Courier",
               fontSize: 24
             }}

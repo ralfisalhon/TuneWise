@@ -31,7 +31,11 @@ express()
 
     // This is just for fun
     .get('/', (req, res) => {
-        res.send("Tunewise 😎\n\n\nCheck us out at https://github.com/ralfisalhon/TuneWise!");
+    	html = "<!DOCTYPE html><html><head><title>TuneWise</title></head>" +
+    	       "<body><h1>TuneWise 😎</h1><p>Check us out on " + 
+    	       "<a href=\"https://github.com/ralfisalhon/TuneWise\">GitHub!" +
+    	       "</a><p></body></html>"
+    	res.send(html)
     })
 
     // Get the next song to be played.

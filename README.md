@@ -17,7 +17,7 @@ designs made using Sketch. The back end was built using Node.js with MongoDB
 for storage and persistence.
 
 ## The Team
-Ralfi Salhon - front end
-Mohsin Rizvi - back end
-Nihal Pai - UI/UX
-San Akdag - project manager
+* Ralfi Salhon - front end
+* Mohsin Rizvi - back end
+* Nihal Pai - UI/UX
+* San Akdag - project manager

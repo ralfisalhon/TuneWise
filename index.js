@@ -31,7 +31,7 @@ express()
 
     // This is just for fun
     .get('/', (req, res) => {
-        res.send("Tune Wire B)");
+        res.send("Tunewise 😎\n\n\nCheck us out at https://github.com/ralfisalhon/TuneWise!");
     })
 
     // Get the next song to be played.

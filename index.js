@@ -4,6 +4,7 @@ var path       = require('path')
 var crypto     = require('crypto');
 var PORT       = process.env.PORT || 3000;
 
+// Configure MongoDB
 var mongoUri = 'mongodb://' + process.env.DBUSER + ':' + process.env.DBPASS + 
                '@' + process.env.DBURL
 var mongo  = require('mongodb').MongoClient;
@@ -12,6 +13,7 @@ var db = mongo.connect(mongoUri, function(error, dbconnection) {
     db = dbconnection;
 });
 
+// Minimum and maximum integer codes for rooms
 const MIN_CODE = 1000
 const MAX_CODE = 9999
 
@@ -32,8 +34,11 @@ express()
         res.send("Tune Wire B)");
     })
 
-    // Get the next song to be played. Sends {song_uri: "", song_id: "", 
-    // user_id: ""} if the list is empty.
+    // Get the next song to be played.
+    // Use:        GET /upnext
+    // Parameters: code - 4 digit string room code
+    // Returns:    {song_uri, song_id, user_id}
+    // Notes:      If song list is empty, all fields are "".
     .get('/upnext', (req, res) => {
         var room_code = req.query.code;
 
@@ -61,7 +66,11 @@ express()
         });
     })
 
-    // Get the emptiness of the queue.
+    // Get the emptiness of the song list.
+    // Use:        GET /isempty
+    // Parameters: code - 4 digit string room code
+    // Returns:    "true" or "false"
+    // Notes:      n/a
     .get('/isempty', (req, res) => {
         var room_code = req.query.code;
 
@@ -85,7 +94,11 @@ express()
         });
     })
 
-    // Get the songs in the list
+    // Get the songs in the song list.
+    // Use:        GET /getlist
+    // Parameters: code - 4 digit string room code
+    // Returns:    [{song_uri, song_id, user_id}]
+    // Notes:      n/a
     .get('/getlist', (req, res) => {
         var room_code = req.query.code;
 
@@ -110,6 +123,10 @@ express()
     })
 
     // Get the players in the room
+    // Use:        GET /players
+    // Parameters: code - 4 digit string room code
+    // Returns:    [{user_name, user_id}]
+    // Notes:      n/a
     .get('/players', (req, res) => {
         var room_code = req.query.code;
 
@@ -134,7 +151,11 @@ express()
         });
     })
 
-    // Get the winner of the last round. Returns {user_id: ""} if none.
+    // Get the winner of the last round.
+    // Use:        GET /lastwinner
+    // Parameters: code - 4 digit string room code
+    // Returns:    {user_id}
+    // Notes:      user_id is "" if no users have won.
     .get('/lastwinner', (req, res) => {
         var room_code = req.query.code;
 
@@ -161,6 +182,10 @@ express()
     // POST routes
 
     // Book a room, returning the room code.
+    // Use:        POST /bookroom
+    // Parameters: token - Spotify access token to use
+    // Returns:    {code, time_created}
+    // Notes:      n/a
     .post('/bookroom', (req, res) => {
         var access_token = req.body.token;
 
@@ -201,6 +226,11 @@ express()
     })
 
     // Join a room, returning a "unique" user id.
+    // Use:        POST /joinroom
+    // Parameters: code - 4 digit string room code
+    //             name - the username for the player
+    // Returns:    {id, token}
+    // Notes:      n/a
     .post('/joinroom', (req, res) => {
         var room_code = req.body.code;
         var name      = req.body.name;
@@ -237,7 +267,13 @@ express()
     })
 
     // Start a new round and push the song onto the list.
-    // This should be used over POST /push!
+    // Use:        POST /startround
+    // Parameters: code     - 4 digit string room code
+    //             song_uri - the song URI to play
+    //             song_id  - the song's Spotify ID
+    //             user_id  - the id for the player choosing the song
+    // Returns:    n/a
+    // Notes:      Use this over POST /push for adding songs.
     .post('/startround', (req, res) => {
         var room_code = req.body.code;
         var uri       = req.body.song_uri;
@@ -291,8 +327,27 @@ express()
     })
 
     // Submit a guess for a song.
-    // NOTE - At end of the song, everyone should call /getwinner to get the
-    // winner.
+    // Use:        POST /guess
+    // Parameters: code     - 4 digit string room code
+    //             user_id  - the id for the player guessing
+    //             guess_id - the guessed song's Spotify ID
+    // Returns:    {guessed, correct, someone_won, winner_id}
+    // Notes:      guessed is "true" if the guess was successful (i.e. you have
+    //             not used up all your guesses AND nobody else has gotten it
+    //             right), "false" otherwise).
+    //             correct is "true" if your guess was correct, you had a
+    //             valid guess, and nobody else got it, "false" otherwise.
+    //             someone_won is "true" if somebody has guessed it right,
+    //             "false" otherwise.
+    //             winner_id is contained in the returned JSON if and only if
+    //             someone else has gotten it right. Otherwise, it is not sent
+    //             back to the caller with the other fields.
+    // Notes:      Use this over POST /push for adding songs. At the end of the
+    //             song, everyone should call /getwinner to get the round's
+    //             winner.
+    //             NEEDSWORK: the returned JSON is not always the same
+    //             structure (i.e. sometimes winner_id is included, sometimes
+    //             not, look into a better way to do this).
     .post('/guess', (req, res) => {
         var room_code = req.body.code;
         var user_id   = req.body.user_id;
@@ -397,57 +452,11 @@ express()
         });
     })
 
-    // Push a song into the room's song list.
-    // Look into using POST /startround instead to push a song AND start the
-    // round!
-    .post('/push', (req, res) => {
-        var room_code = req.body.code;
-        var uri       = req.body.song_uri;
-        var id        = req.body.song_id;
-        var u_id      = req.body.user_id;
-
-        if (room_code == null || uri == null || id == null || u_id == null) {
-            res.status(400);
-            res.send("Error: no room code, song URI, song ID, or user ID supplied.");
-            return;
-        }
-
-        db.collection('rooms', (error, collection) => {
-            collection.findOne({code: room_code}, (error, result) => {
-                if (!result) {
-                    res.status(400);
-                    res.send("Error: invalid room code.");
-                    return;
-                }
-
-                // Validate the given user id.
-                collection.findOne({'users.user_id': u_id}, (error, u_result) => {
-                    if (!u_result) {
-                        res.status(400);
-                        res.send("Error: invalid user ID.");
-                        return;
-                    }
-
-                    // Push the new element onto the queue.
-                    var new_queue = result.queue;
-                    new_queue.push({song_uri: uri, song_id: id, user_id: u_id});
-                    collection.updateOne({code: room_code}, 
-                                         {code: room_code, 
-                                          token: result.token,
-                                          time_created: result.time_created, 
-                                          queue: new_queue,
-                                          users: result.users,
-                                          round: result.round}, 
-                                         (error, result) => {
-                        res.status(200);
-                        res.send();
-                    });
-                });
-            });
-        });
-    })
-
     // Empty the room's song list.
+    // Use:        POST /empty
+    // Parameters: code - 4 digit string room code
+    // Returns:    n/a
+    // Notes:      n/a
     .post('/empty', (req, res) => {
         var room_code = req.body.code;
 
@@ -478,6 +487,9 @@ express()
             });
         });
     })
+
+    // Listen on the port.
+    .listen(PORT);
 
 
     // DEPRECATED API ROUTES
@@ -555,5 +567,52 @@ express()
     //     });
     // })
 
-    // Listen on the port.
-    .listen(PORT);
+    // Push a song into the room's song list.
+    // Look into using POST /startround instead to push a song AND start the
+    // round!
+    // .post('/push', (req, res) => {
+    //     var room_code = req.body.code;
+    //     var uri       = req.body.song_uri;
+    //     var id        = req.body.song_id;
+    //     var u_id      = req.body.user_id;
+
+    //     if (room_code == null || uri == null || id == null || u_id == null) {
+    //         res.status(400);
+    //         res.send("Error: no room code, song URI, song ID, or user ID supplied.");
+    //         return;
+    //     }
+
+    //     db.collection('rooms', (error, collection) => {
+    //         collection.findOne({code: room_code}, (error, result) => {
+    //             if (!result) {
+    //                 res.status(400);
+    //                 res.send("Error: invalid room code.");
+    //                 return;
+    //             }
+
+    //             // Validate the given user id.
+    //             collection.findOne({'users.user_id': u_id}, (error, u_result) => {
+    //                 if (!u_result) {
+    //                     res.status(400);
+    //                     res.send("Error: invalid user ID.");
+    //                     return;
+    //                 }
+
+    //                 // Push the new element onto the queue.
+    //                 var new_queue = result.queue;
+    //                 new_queue.push({song_uri: uri, song_id: id, user_id: u_id});
+    //                 collection.updateOne({code: room_code}, 
+    //                                      {code: room_code, 
+    //                                       token: result.token,
+    //                                       time_created: result.time_created, 
+    //                                       queue: new_queue,
+    //                                       users: result.users,
+    //                                       round: result.round}, 
+    //                                      (error, result) => {
+    //                     res.status(200);
+    //                     res.send();
+    //                 });
+    //             });
+    //         });
+    //     });
+    // })

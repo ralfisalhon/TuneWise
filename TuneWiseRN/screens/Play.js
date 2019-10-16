@@ -70,7 +70,7 @@ export class PlayScreen extends React.Component {
         const sound = new Sound(song_uri, null, error => {
           if (error) {
             // do something
-            // console.warn("Song does not have a preview url");
+            console.warn("Song does not have a preview url");
           }
           // play when loaded
           sound.play();
@@ -358,7 +358,6 @@ export class PlayScreen extends React.Component {
           back={true}
         ></Header>
         <View style={{ flex: 0.85, justifyContent: "center", marginBottom: 96 }}>
-          {/* HERE FOR DEMO SHOWCASE */}
           <View style={styles.card}>
             {!this.state.firstSong && this.state.host ? this.renderYourSong() : this.renderGuess()}
           </View>

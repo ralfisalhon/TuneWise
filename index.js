@@ -211,8 +211,8 @@ express()
                 // This isn't ideal, but this is also a hackathon
                 if (result) {
                     while (result.code === room_code) {
-                        // Remove rooms older than 4 hours
-                        if (result.time_created > (Date.now() - (4 * 1000 * 60 * 60))) {
+                        // Remove rooms older than an hour
+                        if (result.time_created > (Date.now() - (1000 * 60 * 60))) {
                             break;
                         }
                         room_code = (Math.random() * (MAX_CODE - MIN_CODE) + MAX_CODE).toString();

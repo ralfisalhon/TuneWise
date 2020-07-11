@@ -227,8 +227,6 @@ express()
                         round: {winner_id: "", is_won: "false", guesses: []}};
                 collection.insertOne(room, (error, result) => {
                     res.status(200);
-                    res.header("Access-Control-Allow-Headers", "*");
-                    res.header("Access-Control-Allow-Origin", "http://localhost:3000");
                     res.send({code: room_code, time_created: room.time_created});
                 });
             });

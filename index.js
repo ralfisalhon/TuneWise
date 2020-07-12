@@ -27,6 +27,7 @@ express()
     .use(bodyparser.json())
     .use(bodyparser.urlencoded({extended: true}))
     .use((req, res, next) => {
+    	res.header('Access-Control-Allow-Headers', '*');
     	res.header('Access-Control-Allow-Origin', '*');
     	next();
     })

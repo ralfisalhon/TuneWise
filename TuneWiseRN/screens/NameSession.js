@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component } from 'react';
 import {
   StyleSheet,
   Text,
@@ -15,21 +15,21 @@ import {
   KeyboardAvoidingView,
   TouchableWithoutFeedback,
   Keyboard,
-  Switch
-} from "react-native";
-const { width: windowWidth, height: windowHeight } = Dimensions.get("window");
-import { human } from "react-native-typography";
+  Switch,
+} from 'react-native';
+const { width: windowWidth, height: windowHeight } = Dimensions.get('window');
+import { human } from 'react-native-typography';
 
-import { LinedText } from "../assets/components/LinedText";
-import { Header } from "../assets/components/Header";
-import { SafeAreaView } from "react-navigation";
+import { LinedText } from '../assets/components/LinedText';
+import { Header } from '../assets/components/Header';
+import { SafeAreaView } from 'react-navigation';
 // import { TextInput } from "react-native-gesture-handler";
 
-const baseURI = "http://tunewise.herokuapp.com";
+const baseURI = 'http://tunewise.herokuapp.com';
 
 export class NameSessionScreen extends React.Component {
   static navigationOptions = {
-    header: null
+    header: null,
     // gesturesEnabled: false
   };
 
@@ -40,7 +40,7 @@ export class NameSessionScreen extends React.Component {
       accessToken: null,
       sessionName: null,
       multiPhone: false,
-      code: null
+      code: null,
     };
   }
 
@@ -60,55 +60,55 @@ export class NameSessionScreen extends React.Component {
   bookRoom = async (accessToken, navigate) => {
     var xhr = new XMLHttpRequest();
 
-    xhr.onreadystatechange = e => {
+    xhr.onreadystatechange = (e) => {
       // console.warn(xhr.readyState);
       if (xhr.readyState !== 4) {
         return;
       }
       if (xhr.status == 200) {
         var data = xhr.responseText;
-        var obj = JSON.parse(data.replace(/\r?\n|\r/g, ""));
+        var obj = JSON.parse(data.replace(/\r?\n|\r/g, ''));
         // console.warn(obj);
         // navigate("Play", {
         //   accessToken: accessToken,
         //   sessionName: this.state.sessionName,
         //   host: true
         // });
-        this.joinRoom(obj.code, "Ralfi2", navigate);
+        this.joinRoom(obj.code, 'Ralfi2', navigate);
       } else {
         // console.warn(xhr.responseText, xhr.status);
       }
     };
 
-    xhr.open("POST", baseURI + "/bookroom");
-    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-    xhr.send("token=" + accessToken);
+    xhr.open('POST', baseURI + '/bookroom');
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.send('token=' + accessToken);
   };
 
   joinRoom = async (sessionCode, name, navigate) => {
     var xhr = new XMLHttpRequest();
 
-    xhr.onreadystatechange = e => {
+    xhr.onreadystatechange = (e) => {
       // console.warn(xhr.readyState);
       if (xhr.readyState !== 4) {
         return;
       }
       if (xhr.status == 200) {
         var data = xhr.responseText;
-        var obj = JSON.parse(data.replace(/\r?\n|\r/g, ""));
+        var obj = JSON.parse(data.replace(/\r?\n|\r/g, ''));
         if (!obj || !obj.id || !obj.token) {
-          Alert.alert("oopsie, wrong room code");
+          Alert.alert('oopsie, wrong room code');
         }
         let id = obj.id;
         let token = obj.token;
 
         // console.warn(id, token);
-        navigate("Play", {
+        navigate('Play', {
           accessToken: token,
           sessionName: this.state.sessionName,
           id,
           host: true,
-          roomCode: sessionCode
+          roomCode: sessionCode,
         });
         this.setState({ id });
       } else {
@@ -117,9 +117,9 @@ export class NameSessionScreen extends React.Component {
       }
     };
 
-    xhr.open("POST", baseURI + "/joinroom");
-    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-    xhr.send("code=" + sessionCode + "&name=" + name);
+    xhr.open('POST', baseURI + '/joinroom');
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.send('code=' + sessionCode + '&name=' + name);
   };
 
   checkInput(navigate, accessToken) {
@@ -127,7 +127,7 @@ export class NameSessionScreen extends React.Component {
     if (sessionName) {
       this.bookRoom(accessToken, navigate);
     } else {
-      Alert.alert("pls name ur session");
+      Alert.alert('pls name ur session');
     }
   }
 
@@ -137,42 +137,37 @@ export class NameSessionScreen extends React.Component {
 
     return (
       <SafeAreaView style={styles.container}>
-        <Header
-          title={"name ur session"}
-          navigate={navigate}
-          navigation={this.props.navigation}
-          back={true}
-        />
+        <Header title={'name ur session'} navigate={navigate} navigation={this.props.navigation} back={true} />
         <KeyboardAvoidingView
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+          style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
           behavior="padding"
           enabled
         >
           <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-            <View style={{ justifyContent: "center", alignItems: "center" }}>
+            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
               <View style={styles.logo}>
                 <Image
                   style={{ height: undefined, width: undefined, flex: 1 }}
-                  resizeMode={"contain"}
-                  source={require("../assets/images/logo.png")}
+                  resizeMode={'contain'}
+                  source={require('../assets/images/logo.png')}
                 />
               </View>
               <View style={styles.input}>
                 <TextInput
-                  placeholder={"session name"}
+                  placeholder={'session name'}
                   value={this.state.sessionName}
                   style={{
                     flex: 1,
-                    color: "white",
-                    fontFamily: "Courier",
-                    fontSize: 24
+                    color: 'white',
+                    fontFamily: 'Courier',
+                    fontSize: 24,
                   }}
-                  autoCapitalize={"none"}
-                  autoCompleteType={"off"}
+                  autoCapitalize={'none'}
+                  autoCompleteType={'off'}
                   autoCorrect={false}
                   maxLength={20}
-                  placeholderTextColor={"#bdc3c7"}
-                  onChangeText={text => this.updateSessionName(text)}
+                  placeholderTextColor={'#bdc3c7'}
+                  onChangeText={(text) => this.updateSessionName(text)}
                 />
               </View>
             </View>
@@ -194,39 +189,39 @@ export class NameSessionScreen extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#010d58",
-    alignItems: "center"
+    backgroundColor: '#010d58',
+    alignItems: 'center',
   },
   logo: {
     height: windowHeight / 3.4,
     width: windowWidth - 40,
-    borderRadius: 20
+    borderRadius: 20,
   },
   input: {
     marginTop: 40,
     marginBottom: 25,
     borderWidth: 2,
     borderRadius: 25,
-    borderColor: "white",
+    borderColor: 'white',
     paddingHorizontal: 20,
     height: 60,
-    width: windowWidth * 0.8
+    width: windowWidth * 0.8,
   },
   button: {
-    backgroundColor: "gray",
+    backgroundColor: 'gray',
     paddingHorizontal: 25,
     paddingVertical: 18,
-    borderRadius: 20
+    borderRadius: 20,
   },
   startGame: {
-    backgroundColor: "white",
-    marginTop: 25
+    backgroundColor: 'white',
+    marginTop: 25,
   },
   text: {
-    color: "#010d58",
-    fontFamily: "Courier",
-    fontSize: 22
-  }
+    color: '#010d58',
+    fontFamily: 'Courier',
+    fontSize: 22,
+  },
   // switch: {
   //   height: 40
   // }

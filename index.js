@@ -153,7 +153,7 @@ express()
         if (result) {
           while (result.code === room_code) {
             // Remove rooms older than an hour
-            if (result.time_created > Date.now() - 1000 * 60 * 60) {
+            if (result.time_created > Date.now() + 1000 * 60 * 60) {
               break;
             }
             room_code = (Math.random() * (MAX_CODE - MIN_CODE) + MAX_CODE).toString();
@@ -195,7 +195,7 @@ express()
     var id = crypto.randomBytes(16).toString('hex');
     db.collection('rooms', (error, collection) => {
       collection.findOne({ code: room_code }, (error, result) => {
-        if (!result || result.time_created > Date.now() - 1000 * 60 * 60) {
+        if (!result || result.time_created > Date.now() + 1000 * 60 * 60) {
           // Validate room code.
           res.status(400);
           res.send('Error: invalid room code.');

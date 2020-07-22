@@ -351,7 +351,8 @@ express()
         // Case 2: I'm out of guesses
         else if (my_guesses >= 3) {
           res.status(200);
-          res.send({ guessed: 'false', correct: 'false', someone_won: 'false', winner_name: "", song_name: "", artist: "" });
+          res.send({ guessed: 'false', correct: 'false', someone_won: 'false', 
+                     winner_name: "", song_name: this_round.song_name, artist: this_round.artist });
           return;
         }
         // Case 3: I have more guesses, but I'm wrong
@@ -381,7 +382,8 @@ express()
             },
             (error, up_result) => {
               res.status(200);
-              res.send({ guessed: 'true', correct: 'false', someone_won: 'false', winner_name: "", song_name: "", artist: "" });
+              res.send({ guessed: 'true', correct: 'false', someone_won: 'false', 
+                         winner_name: "", song_name: new_round.song_name, artist: new_round.artist });
               return;
             }
           );

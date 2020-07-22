@@ -74,7 +74,7 @@ express()
   // Get the players in the room
   // Use:        GET /players
   // Parameters: code - 4 digit string room code
-  // Returns:    [{user_name, user_name}]
+  // Returns:    [{user_name, points}]
   // Notes:      n/a
   .get('/players', (req, res) => {
     var room_code = req.query.code;
@@ -103,7 +103,7 @@ express()
   // Get the winner of the last round.
   // Use:        GET /lastwinner
   // Parameters: code - 4 digit string room code
-  // Returns:    {user_name}
+  // Returns:    {user_name, points}
   // Notes:      user_name is "" if no users have won.
   .get('/lastwinner', (req, res) => {
     var room_code = req.query.code;
@@ -166,7 +166,7 @@ express()
           time_created: Date.now(),
           queue: [],
           users: [],
-          round: { winner_name: '', is_won: 'false', guesses: [] },
+          round: { winner_name: '', is_won: 'false', guesses: [], song_name: "", song_artist: "" },
         };
         collection.insertOne(room, (error, result) => {
           res.status(200);
@@ -203,7 +203,7 @@ express()
         }
 
         var new_users = result.users;
-        new_users.push({ user_name: name });
+        new_users.push({ user_name: name , points: 0});
         collection.updateOne(
           { code: room_code },
           {
@@ -225,19 +225,23 @@ express()
 
   // Start a new round and push the song onto the list.
   // Use:        POST /startround
-  // Parameters: code     - 4 digit string room code
-  //             song_uri - the song URI to play
-  //             song_id  - the song's Spotify ID
-  //             user_name  - the id for the player choosing the song
+  // Parameters: code        - 4 digit string room code
+  //             song_uri    - the song URI to play
+  //             song_id     - the song's Spotify ID
+  //             song_name   - the song's name
+  //             song_artist - the song's artist
+  //             user_name   - the id for the player choosing the song
   // Returns:    n/a
   // Notes:      Use this over POST /push for adding songs.
   .post('/startround', (req, res) => {
     var room_code = req.body.code;
     var uri = req.body.song_uri;
     var id = req.body.song_id;
+    var name = req.body.song_name;
+    var artist = req.body.song_artist;
     var u_name = req.body.user_name;
 
-    if (room_code == null || uri == null || id == null || u_name == null) {
+    if (room_code == null || uri == null || id == null || u_name == null || name == null || artist == null) {
       res.status(400);
       res.send('Error: no room code, song URI, song ID, or user ID supplied.');
       return;
@@ -259,6 +263,8 @@ express()
         var new_round = result.round;
         new_round.is_won = 'false';
         new_round.guesses = [];
+        new_round.song_name = name;
+        new_round.artist = artist;
         collection.updateOne(
           { code: room_code },
           {
@@ -283,7 +289,7 @@ express()
   // Parameters: code     - 4 digit string room code
   //             user_name  - the id for the player guessing
   //             guess_id - the guessed song's Spotify ID
-  // Returns:    {guessed, correct, someone_won, winner_name}
+  // Returns:    {guessed, correct, someone_won, winner_name, song_name, artist}
   // Notes:      guessed is "true" if the guess was successful (i.e. you have
   //             not used up all your guesses AND nobody else has gotten it
   //             right), "false" otherwise).
@@ -338,13 +344,14 @@ express()
         // Case 1: Someone has guessed it right
         if (this_round.is_won == 'true') {
           res.status(200);
-          res.send({ guessed: 'false', correct: 'false', someone_won: 'true', winner_name: this_round.winner_name });
+          res.send({ guessed: 'false', correct: 'false', someone_won: 'true', 
+                     winner_name: this_round.winner_name, song_name: this_round.song_name, artist: this_round.artist });
           return;
         }
         // Case 2: I'm out of guesses
         else if (my_guesses >= 3) {
           res.status(200);
-          res.send({ guessed: 'false', correct: 'false', someone_won: 'false' });
+          res.send({ guessed: 'false', correct: 'false', someone_won: 'false', winner_name: "", song_name: "", artist: "" });
           return;
         }
         // Case 3: I have more guesses, but I'm wrong
@@ -374,13 +381,20 @@ express()
             },
             (error, up_result) => {
               res.status(200);
-              res.send({ guessed: 'true', correct: 'false', someone_won: 'false' });
+              res.send({ guessed: 'true', correct: 'false', someone_won: 'false', winner_name: "", song_name: "", artist: "" });
               return;
             }
           );
         }
         // Case 4: I have more guesses, and I'm right
         else {
+          // Update points
+          for (i = 0; i < result.users.length; i++) {
+            if (user_name == result.users[i].user_name) {
+              result.users[i].points += 10;
+            }
+          }
+
           new_round = result.round;
           new_round.is_won = 'true';
           new_round.winner_name = user_name;
@@ -398,7 +412,8 @@ express()
             },
             (error, up_result) => {
               res.status(200);
-              res.send({ guessed: 'true', correct: 'true', someone_won: 'true' });
+              res.send({ guessed: 'true', correct: 'true', someone_won: 'true', 
+                         winner_name: user_name, song_name: new_round.song_name, artist: new_round.artist });
             }
           );
         }
